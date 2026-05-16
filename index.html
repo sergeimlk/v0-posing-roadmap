@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Posing Empire — Roadmap Personnalisée | Onboarding</title>
+  <meta name="description" content="Génère ta roadmap personnalisée Posing Empire en 2 minutes. Questionnaire d'onboarding coaching posing bodybuilding." />
+  <meta name="theme-color" content="#050505" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ══════════════ NAVBAR ══════════════ -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="nav-logo-icon">PE</div>
+        <span class="nav-brand-text">POSING EMPIRE</span>
+      </div>
+      <div class="nav-right">
+        <a href="https://posingempire.vercel.app/" class="nav-link" target="_blank">Site Principal</a>
+        <a href="https://www.skool.com/manael" class="nav-cta-btn" target="_blank">Rejoindre Skool</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════ SCREEN 1: QUESTIONNAIRE ══════════════ -->
+  <main id="screen-form" class="screen active">
+    <div class="hero-grid-bg">
+      <div class="grid-overlay"></div>
+      <div class="radial-glow"></div>
+    </div>
+    
+    <div class="form-wrapper">
+      <div class="form-header">
+        <div class="badge-pulse">
+          <span class="pulse-dot"></span>
+          <span>Onboarding Skool · Posing Empire</span>
+        </div>
+        <h1 class="form-title">
+          <span class="text-white-gradient">TA ROADMAP </span>
+          <span class="text-gold-gradient">PERSONNALISÉE</span>
+        </h1>
+        <p class="form-subtitle">Remplis ce questionnaire en 2 minutes — on génère ta roadmap de coaching sur-mesure.</p>
+      </div>
+
+      <form id="onboarding-form" class="form-card" autocomplete="off">
+        <!-- Ligne dorée top -->
+        <div class="form-gold-line"></div>
+
+        <!-- Nom & Prénom -->
+        <div class="form-group">
+          <label for="fullname">Nom & Prénom <span class="required">*</span></label>
+          <input type="text" id="fullname" name="fullname" placeholder="Ex: Manaël Dupont" required />
+        </div>
+
+        <!-- Catégorie -->
+        <div class="form-group">
+          <label>Catégorie <span class="required">*</span></label>
+          <div class="selector-grid selector-grid-2x2">
+            <button type="button" class="selector-btn" data-group="category" data-value="Men's Physique">
+              <span class="selector-icon">🏋️</span>
+              <span>Men's Physique</span>
+            </button>
+            <button type="button" class="selector-btn" data-group="category" data-value="Classic Physique">
+              <span class="selector-icon">🏛️</span>
+              <span>Classic Physique</span>
+            </button>
+            <button type="button" class="selector-btn" data-group="category" data-value="Bodybuilding">
+              <span class="selector-icon">💪</span>
+              <span>Bodybuilding</span>
+            </button>
+            <button type="button" class="selector-btn" data-group="category" data-value="Figure">
+              <span class="selector-icon">👑</span>
+              <span>Figure</span>
+            </button>
+          </div>
+          <input type="hidden" id="category" name="category" />
+        </div>
+
+        <!-- Fédération -->
+        <div class="form-group">
+          <label for="federation">Fédération <span class="required">*</span></label>
+          <div class="selector-grid selector-grid-row">
+            <button type="button" class="selector-btn selector-btn-sm" data-group="federation" data-value="WNBF">WNBF</button>
+            <button type="button" class="selector-btn selector-btn-sm" data-group="federation" data-value="IFBB">IFBB</button>
+            <button type="button" class="selector-btn selector-btn-sm" data-group="federation" data-value="NPC">NPC</button>
+            <button type="button" class="selector-btn selector-btn-sm" data-group="federation" data-value="Autre">Autre</button>
+          </div>
+          <input type="text" id="federation-other" name="federation-other" placeholder="Précise ta fédération / compétition..." class="hidden-field" />
+          <input type="hidden" id="federation" name="federation" />
+        </div>
+
+        <!-- Niveau actuel -->
+        <div class="form-group">
+          <label>Niveau actuel en posing <span class="required">*</span></label>
+          <div class="level-selector">
+            <div class="level-track">
+              <div class="level-fill" id="level-fill"></div>
+            </div>
+            <div class="level-dots">
+              <button type="button" class="level-dot" data-level="0">
+                <span class="dot-circle">0</span>
+                <span class="dot-label">Débutant</span>
+              </button>
+              <button type="button" class="level-dot" data-level="1">
+                <span class="dot-circle">1</span>
+                <span class="dot-label">Novice</span>
+              </button>
+              <button type="button" class="level-dot" data-level="2">
+                <span class="dot-circle">2</span>
+                <span class="dot-label">Intermédiaire</span>
+              </button>
+              <button type="button" class="level-dot" data-level="3">
+                <span class="dot-circle">3</span>
+                <span class="dot-label">Confirmé</span>
+              </button>
+              <button type="button" class="level-dot" data-level="4">
+                <span class="dot-circle">4</span>
+                <span class="dot-label">Avancé</span>
+              </button>
+              <button type="button" class="level-dot" data-level="5">
+                <span class="dot-circle">5</span>
+                <span class="dot-label">Expert</span>
+              </button>
+            </div>
+          </div>
+          <input type="hidden" id="level" name="level" />
+        </div>
+
+        <!-- Objectifs -->
+        <div class="form-group">
+          <label for="objectives">Objectifs du Skool <span class="required">*</span></label>
+          <textarea id="objectives" name="objectives" placeholder="Ex: Maîtriser les mandatories, préparer ma première compétition, améliorer mes transitions..." rows="3" required></textarea>
+        </div>
+
+        <!-- Problématiques -->
+        <div class="form-group">
+          <label for="problems">Problématiques actuelles <span class="required">*</span></label>
+          <textarea id="problems" name="problems" placeholder="Ex: Douleur épaule droite, limitation mobilité omoplate, difficulté vacuum, manque de symétrie..." rows="3" required></textarea>
+        </div>
+
+        <!-- Temps pratique quotidien -->
+        <div class="form-group">
+          <label>Temps de pratique quotidienne envisagé <span class="required">*</span></label>
+          <div class="selector-grid selector-grid-row">
+            <button type="button" class="selector-btn selector-btn-sm" data-group="time" data-value="15 min">15 min</button>
+            <button type="button" class="selector-btn selector-btn-sm" data-group="time" data-value="30 min">30 min</button>
+            <button type="button" class="selector-btn selector-btn-sm" data-group="time" data-value="45 min">45 min</button>
+            <button type="button" class="selector-btn selector-btn-sm" data-group="time" data-value="1h+">1h+</button>
+          </div>
+          <input type="hidden" id="time" name="time" />
+        </div>
+
+        <!-- Besoins -->
+        <div class="form-group">
+          <label>Besoins spécifiques</label>
+          <div class="checkbox-group">
+            <label class="checkbox-card">
+              <input type="checkbox" name="needs" value="routine_libre" />
+              <span class="checkbox-visual">
+                <span class="check-icon">
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </span>
+              <span class="checkbox-content">
+                <span class="checkbox-title">Créer une Routine Libre</span>
+                <span class="checkbox-desc">Chorégraphie personnalisée pour les poses libres</span>
+              </span>
+            </label>
+            <label class="checkbox-card">
+              <input type="checkbox" name="needs" value="presentation_individuelle" />
+              <span class="checkbox-visual">
+                <span class="check-icon">
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </span>
+              <span class="checkbox-content">
+                <span class="checkbox-title">Créer une Présentation Individuelle</span>
+                <span class="checkbox-desc">Entrée en scène et présentation solo personnalisée</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-primary-gold btn-submit" id="btn-submit">
+          <span>Générer ma Roadmap</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+
+        <p class="form-privacy">Tes données sont utilisées uniquement pour personnaliser ta roadmap.</p>
+      </form>
+    </div>
+  </main>
+
+  <!-- ══════════════ SCREEN 2: LOADING ══════════════ -->
+  <main id="screen-loading" class="screen">
+    <div class="hero-grid-bg">
+      <div class="grid-overlay"></div>
+      <div class="radial-glow"></div>
+    </div>
+    <div class="loading-wrapper">
+      <div class="loading-ring">
+        <div class="ring-segment"></div>
+        <div class="ring-inner">
+          <div class="ring-logo">PE</div>
+        </div>
+      </div>
+      <h2 class="loading-title">
+        <span class="text-white-gradient">Génération de ta </span>
+        <span class="text-gold-gradient">Roadmap...</span>
+      </h2>
+      <div class="loading-steps">
+        <div class="loading-step" id="lstep-1">
+          <span class="step-check">⏳</span>
+          <span>Analyse de ton profil...</span>
+        </div>
+        <div class="loading-step" id="lstep-2">
+          <span class="step-check">⏳</span>
+          <span>Sélection des modules adaptés...</span>
+        </div>
+        <div class="loading-step" id="lstep-3">
+          <span class="step-check">⏳</span>
+          <span>Création de ta roadmap personnalisée...</span>
+        </div>
+      </div>
+      <div class="loading-bar-container">
+        <div class="loading-bar" id="loading-bar"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══════════════ SCREEN 3: ROADMAP ══════════════ -->
+  <main id="screen-roadmap" class="screen">
+    <div class="hero-grid-bg">
+      <div class="grid-overlay"></div>
+      <div class="radial-glow"></div>
+    </div>
+
+    <div class="roadmap-actions-top">
+      <button class="btn-primary-gold btn-download" id="btn-download-pdf">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        <span>Télécharger ma Roadmap PDF</span>
+      </button>
+      <button class="btn-secondary-gold btn-restart" id="btn-restart">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+        <span>Recommencer</span>
+      </button>
+    </div>
+
+    <!-- PDF-RENDERABLE ROADMAP -->
+    <div id="roadmap-pdf-content" class="roadmap-container">
+      <!-- This is populated by JS -->
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
