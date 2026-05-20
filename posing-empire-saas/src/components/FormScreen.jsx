@@ -187,7 +187,7 @@ export default function FormScreen({ onSubmit }) {
                 exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
               >
                 <label>Fédération <span className="required">*</span></label>
-                <div className="selector-grid selector-grid-row">
+                <div className="selector-grid selector-grid-fed">
                   {FEDERATIONS.map(fed => (
                     <motion.button
                       key={fed.value}
