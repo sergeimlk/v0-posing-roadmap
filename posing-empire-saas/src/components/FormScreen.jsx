@@ -1,0 +1,396 @@
+import { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import BackgroundGrid from './BackgroundGrid';
+
+const CATEGORIES = [
+  { value: "Men's Physique", icon: '🏋️', label: "Men's Physique" },
+  { value: 'Classic Physique', icon: '🏛️', label: 'Classic Physique' },
+  { value: 'Bodybuilding', icon: '💪', label: 'Bodybuilding' },
+  { value: 'Figure', icon: '👑', label: 'Figure' },
+  { value: 'Non compétiteur', icon: '🎯', label: 'Non compétiteur' },
+];
+
+const FEDERATIONS = [
+  { value: 'WNBF', label: 'WNBF' },
+  { value: 'IFBB', label: 'IFBB' },
+  { value: 'NPC', label: 'NPC' },
+  { value: 'OCB', label: 'OCB' },
+  { value: 'ACP', label: 'ACP' },
+  { value: 'FFFCN', label: 'FFFCN' },
+  { value: 'PCA', label: 'PCA' },
+  { value: 'NBFI', label: 'NBFI' },
+  { value: 'WABBA', label: 'WABBA' },
+  { value: 'AFBBN', label: 'AFBBN' },
+  { value: 'Autre', label: 'Autre' },
+];
+
+const TIMES = [
+  { value: '15 min', label: '15 min' },
+  { value: '30 min', label: '30 min' },
+  { value: '45 min', label: '45 min' },
+  { value: '1h+', label: '1h+' },
+];
+
+const LEVELS = [
+  { value: 0, label: 'Débutant' },
+  { value: 1, label: 'Novice' },
+  { value: 2, label: 'Intermédiaire' },
+  { value: 3, label: 'Confirmé' },
+  { value: 4, label: 'Avancé' },
+  { value: 5, label: 'Expert' },
+];
+
+export default function FormScreen({ onSubmit }) {
+  const [formData, setFormData] = useState({
+    fullname: '',
+    category: '',
+    federation: '',
+    federationOther: '',
+    level: null,
+    objectives: '',
+    problems: '',
+    time: '',
+    needs: [],
+  });
+
+  const [shakeField, setShakeField] = useState(null);
+
+  const updateField = useCallback((field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const toggleNeed = useCallback((need) => {
+    setFormData(prev => ({
+      ...prev,
+      needs: prev.needs.includes(need)
+        ? prev.needs.filter(n => n !== need)
+        : [...prev.needs, need],
+    }));
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Validate required selectors
+    if (!formData.category) { triggerShake('category'); return; }
+    if (formData.category !== 'Non compétiteur' && !formData.federation) { triggerShake('federation'); return; }
+    if (formData.level === null) { triggerShake('level'); return; }
+    if (!formData.time) { triggerShake('time'); return; }
+
+    // Collect data
+    const submissionData = {
+      fullname: formData.fullname.trim(),
+      category: formData.category,
+      federation: formData.category === 'Non compétiteur'
+        ? 'Aucune'
+        : (formData.federation === 'Autre'
+          ? (formData.federationOther.trim() || 'Autre')
+          : formData.federation),
+      level: formData.level,
+      objectives: formData.objectives.trim(),
+      problems: formData.problems.trim(),
+      time: formData.time,
+      needs: formData.needs,
+    };
+
+    onSubmit(submissionData);
+  };
+
+  const triggerShake = (field) => {
+    setShakeField(field);
+    setTimeout(() => setShakeField(null), 500);
+
+    // Scroll to the element
+    const el = document.getElementById(`group-${field}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  return (
+    <main className="screen active">
+      <BackgroundGrid />
+
+      <motion.div
+        className="form-wrapper"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
+        {/* Header */}
+        <div className="form-header">
+          <div className="badge-pulse">
+            <span className="pulse-dot"></span>
+            <span>Onboarding Skool · Posing Empire</span>
+          </div>
+          <h1 className="form-title">
+            <span className="text-white-gradient">TA ROADMAP </span>
+            <span className="text-gold-gradient">PERSONNALISÉE</span>
+          </h1>
+          <p className="form-subtitle">
+            Remplis ce questionnaire en 2 minutes — on génère ta roadmap de coaching sur-mesure.
+          </p>
+        </div>
+
+        {/* Form Card */}
+        <form className="form-card" autoComplete="off" onSubmit={handleSubmit}>
+          <div className="form-gold-line"></div>
+
+          {/* Nom & Prénom */}
+          <div className="form-group">
+            <label htmlFor="fullname">Nom & Prénom <span className="required">*</span></label>
+            <input
+              type="text"
+              id="fullname"
+              name="fullname"
+              placeholder="Ex: Manaël Dupont"
+              required
+              value={formData.fullname}
+              onChange={(e) => updateField('fullname', e.target.value)}
+            />
+          </div>
+
+          {/* Catégorie */}
+          <motion.div
+            className="form-group"
+            id="group-category"
+            animate={shakeField === 'category' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label>Catégorie <span className="required">*</span></label>
+            <div className="selector-grid selector-grid-2x2">
+              {CATEGORIES.map(cat => (
+                <motion.button
+                  key={cat.value}
+                  type="button"
+                  className={`selector-btn${formData.category === cat.value ? ' selected' : ''}`}
+                  onClick={() => updateField('category', cat.value)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span className="selector-icon">{cat.icon}</span>
+                  <span>{cat.label}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Fédération */}
+          <AnimatePresence mode="wait">
+            {formData.category !== 'Non compétiteur' && (
+              <motion.div
+                className="form-group"
+                id="group-federation"
+                key="federation-group"
+                animate={shakeField === 'federation' ? { x: [-6, 6, -6, 6, 0] } : {}}
+                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
+                animate={{ opacity: 1, height: 'auto', marginBottom: '1.5rem' }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
+              >
+                <label>Fédération <span className="required">*</span></label>
+                <div className="selector-grid selector-grid-row">
+                  {FEDERATIONS.map(fed => (
+                    <motion.button
+                      key={fed.value}
+                      type="button"
+                      className={`selector-btn selector-btn-sm${formData.federation === fed.value ? ' selected' : ''}`}
+                      onClick={() => {
+                        updateField('federation', fed.value);
+                        if (fed.value !== 'Autre') updateField('federationOther', '');
+                      }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {fed.label}
+                    </motion.button>
+                  ))}
+                </div>
+                <AnimatePresence>
+                  {formData.federation === 'Autre' && (
+                    <motion.input
+                      type="text"
+                      placeholder="Précise ta fédération / compétition..."
+                      className="hidden-field visible"
+                      value={formData.federationOther}
+                      onChange={(e) => updateField('federationOther', e.target.value)}
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginTop: '0.5rem' }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      transition={{ duration: 0.25 }}
+                    />
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Niveau actuel */}
+          <motion.div
+            className="form-group"
+            id="group-level"
+            animate={shakeField === 'level' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label>Niveau actuel en posing <span className="required">*</span></label>
+            <div className="level-selector">
+              <div className="level-track">
+                <motion.div
+                  className="level-fill"
+                  animate={{ width: formData.level !== null ? `${(formData.level / 5) * 100}%` : '0%' }}
+                  transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                />
+              </div>
+              <div className="level-dots">
+                {LEVELS.map(lvl => (
+                  <button
+                    key={lvl.value}
+                    type="button"
+                    className={`level-dot${formData.level === lvl.value ? ' active' : ''}${formData.level !== null && lvl.value < formData.level ? ' passed' : ''}`}
+                    onClick={() => updateField('level', lvl.value)}
+                  >
+                    <span className="dot-circle">{lvl.value}</span>
+                    <span className="dot-label">{lvl.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Objectifs */}
+          <div className="form-group">
+            <label htmlFor="objectives">Objectifs du Skool <span className="required">*</span></label>
+            <textarea
+              id="objectives"
+              name="objectives"
+              placeholder="Ex: Maîtriser les mandatories, préparer ma première compétition, améliorer mes transitions..."
+              rows="3"
+              required
+              value={formData.objectives}
+              onChange={(e) => updateField('objectives', e.target.value)}
+            />
+          </div>
+
+          {/* Problématiques */}
+          <div className="form-group">
+            <label htmlFor="problems">Problématiques actuelles <span className="required">*</span></label>
+            <textarea
+              id="problems"
+              name="problems"
+              placeholder="Ex: Douleur épaule droite, limitation mobilité omoplate, difficulté vacuum, manque de symétrie..."
+              rows="3"
+              required
+              value={formData.problems}
+              onChange={(e) => updateField('problems', e.target.value)}
+            />
+          </div>
+
+          {/* Temps pratique quotidien */}
+          <motion.div
+            className="form-group"
+            id="group-time"
+            animate={shakeField === 'time' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label>Temps de pratique quotidienne envisagé <span className="required">*</span></label>
+            <div className="selector-grid selector-grid-row">
+              {TIMES.map(t => (
+                <motion.button
+                  key={t.value}
+                  type="button"
+                  className={`selector-btn selector-btn-sm${formData.time === t.value ? ' selected' : ''}`}
+                  onClick={() => updateField('time', t.value)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {t.label}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Besoins */}
+          <div className="form-group">
+            <label>Besoins spécifiques</label>
+            <div className="checkbox-group">
+              <label className={`checkbox-card${formData.needs.includes('routine_libre') ? ' checked' : ''}`}>
+                <input
+                  type="checkbox"
+                  name="needs"
+                  value="routine_libre"
+                  checked={formData.needs.includes('routine_libre')}
+                  onChange={() => toggleNeed('routine_libre')}
+                />
+                <span className="checkbox-visual">
+                  <span className="check-icon">
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8.5L6.5 12L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
+                </span>
+                <span className="checkbox-content">
+                  <span className="checkbox-title">Créer une Routine Libre</span>
+                  <span className="checkbox-desc">Chorégraphie personnalisée pour les poses libres</span>
+                </span>
+              </label>
+              <label className={`checkbox-card${formData.needs.includes('presentation_individuelle') ? ' checked' : ''}`}>
+                <input
+                  type="checkbox"
+                  name="needs"
+                  value="presentation_individuelle"
+                  checked={formData.needs.includes('presentation_individuelle')}
+                  onChange={() => toggleNeed('presentation_individuelle')}
+                />
+                <span className="checkbox-visual">
+                  <span className="check-icon">
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8.5L6.5 12L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
+                </span>
+                <span className="checkbox-content">
+                  <span className="checkbox-title">Créer une Présentation Individuelle</span>
+                  <span className="checkbox-desc">Entrée en scène et présentation solo personnalisée</span>
+                </span>
+              </label>
+              <label className={`checkbox-card${formData.needs.includes('accompagnement_1_1') ? ' checked' : ''}`}>
+                <input
+                  type="checkbox"
+                  name="needs"
+                  value="accompagnement_1_1"
+                  checked={formData.needs.includes('accompagnement_1_1')}
+                  onChange={() => toggleNeed('accompagnement_1_1')}
+                />
+                <span className="checkbox-visual">
+                  <span className="check-icon">
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8.5L6.5 12L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
+                </span>
+                <span className="checkbox-content">
+                  <span className="checkbox-title">Accompagnement 1:1</span>
+                  <span className="checkbox-desc">Je suis membre de l'accompagnement premium de Manaël</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          {/* Submit */}
+          <motion.button
+            type="submit"
+            className="btn-primary-gold btn-submit"
+            id="btn-submit"
+            whileHover={{ y: -2, boxShadow: '0 8px 30px rgba(212,168,67,0.4)' }}
+            whileTap={{ y: 0 }}
+          >
+            <span>Générer ma Roadmap</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </motion.button>
+
+          <p className="form-privacy">Tes données sont utilisées uniquement pour personnaliser ta roadmap.</p>
+        </form>
+      </motion.div>
+    </main>
+  );
+}

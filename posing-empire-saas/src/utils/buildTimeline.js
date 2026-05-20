@@ -1,0 +1,668 @@
+// ══════════════════════════════════════════════════════════════
+// POSING EMPIRE — ROADMAP TIMELINE ENGINE v2
+// Basé sur le Cahier des charges v1 de Manaël
+// Génère une roadmap avec les vrais modules & liens Skool
+// ══════════════════════════════════════════════════════════════
+
+const SKOOL_BASE = 'https://www.skool.com/posing-empire-groupe-prive-6566/classroom';
+
+// ── MODULE 1 LINKS ──
+const M1 = {
+  mindset: `${SKOOL_BASE}/00767693?md=8615761a804d4481b132edec55c87bf9`,
+  roadmap: `${SKOOL_BASE}/00767693?md=2e1fb038a7d9487cb269de8ac6789a87`,
+  catMP: `${SKOOL_BASE}/00767693?md=a4ba29b03f064fd09bc4ffd5d262be62`,
+  catCP: `${SKOOL_BASE}/00767693?md=bca953373bac4405a0d294aea7b359ba`,
+  catBB: `${SKOOL_BASE}/00767693?md=bbc1371343f74c72a894149886f43be9`,
+  catNonCompet: `${SKOOL_BASE}/00767693?md=97ef21fb643349449e1f2236b8eeca1f`,
+  bonus: `${SKOOL_BASE}/00767693?md=898f69a65d0b4191bfdae0e6b3ece846`,
+  bestPoser: `${SKOOL_BASE}/00767693?md=e1526bff34734c0790732d1019c2b6c1`,
+};
+
+// ── MODULE 2 LINKS (Fondations) ──
+const M2 = {
+  vocabulaire: `${SKOOL_BASE}/b4d92f9f?md=b15d60223ffd4b47992bec03798c2e92`,
+  methodologie: `${SKOOL_BASE}/b4d92f9f?md=01b9fba0ad224384b1c3bd9bc503944c`,
+  organiser: `${SKOOL_BASE}/b4d92f9f?md=7f2364b457f746189487cb7fbcd61165`,
+  setup: `${SKOOL_BASE}/b4d92f9f?md=152ebbbc4eca42f586edb749bbdc3f1e`,
+  choisirFed: `${SKOOL_BASE}/b4d92f9f?md=fa0be02fb3ff40ef84d70080533e06fe`,
+  choisirCatIntro: `${SKOOL_BASE}/b4d92f9f?md=3129872b6d59453a88b9c3400f0e0915`,
+  choisirCatHomme: `${SKOOL_BASE}/b4d92f9f?md=89da3601218d45c58293ef9cd854cb9c`,
+  symetrieBB: `${SKOOL_BASE}/b4d92f9f?md=2c29dbb9a1074f0981d4653b0b5341a1`,
+  symetrieResoudre: `${SKOOL_BASE}/b4d92f9f?md=e2afaff39ab64d1dbe1f5929998da549`,
+  symetrieTraining: `${SKOOL_BASE}/b4d92f9f?md=4539abf40af6406991f80099fe25281d`,
+  sangleAbdo: `${SKOOL_BASE}/b4d92f9f?md=a1c82e9d5f5b43fd8332aa09555e6de5`,
+  dorsauxTheorie: `${SKOOL_BASE}/b4d92f9f?md=4b7bc6323a2b43b4a9aae6289cfc992a`,
+  dorsauxPratique: `${SKOOL_BASE}/b4d92f9f?md=d7077c893fee42c9ab12014f73f1ced6`,
+};
+
+// ── MODULE 4 LINKS (Classic & Body) ──
+const M4 = {
+  intro: `${SKOOL_BASE}/054c6ec4?md=fa6a4ab57887466397aa55a5de5e4534`,
+  jambesSymetrique: `${SKOOL_BASE}/054c6ec4?md=0fd3652fc8754049b9c4f7c985ed40ef`,
+  jambesAsymetrique: `${SKOOL_BASE}/054c6ec4?md=ccc8075b6dcb43a3b25495c354089608`,
+  frontRelax: `${SKOOL_BASE}/054c6ec4?md=ea3dca91012742a6858fe483877ac111`,
+  frontRelaxMethode: `${SKOOL_BASE}/054c6ec4?md=999a1f1e6e244159a7514f5a921f4384`,
+  sideRelax: `${SKOOL_BASE}/054c6ec4?md=19d81513777546a69da490fce0e02afb`,
+  sideRelaxMethode: `${SKOOL_BASE}/054c6ec4?md=638cbc34a44f4cdca9370e9c69b8e331`,
+  backRelax: `${SKOOL_BASE}/054c6ec4?md=aa344329dd584c49b09af52fbd6da92e`,
+  backRelaxMethode: `${SKOOL_BASE}/054c6ec4?md=cd4e74f7e8a04c7499a616611d310ee6`,
+  frontDoubleBiceps: `${SKOOL_BASE}/054c6ec4?md=23062185be3b40fa9bd9d7b6c78511ac`,
+  classicFDB: `${SKOOL_BASE}/054c6ec4?md=8dddd72a80444c1791928fe56786bc19`,
+  frontLatSpread: `${SKOOL_BASE}/054c6ec4?md=2147b7c5b8fb49529156d2ea89f08755`,
+  sideChest: `${SKOOL_BASE}/054c6ec4?md=b1f1ba683e33440c8cabdc3879b8a803`,
+  classicSideChest: `${SKOOL_BASE}/054c6ec4?md=dfc7dcc92b5549d2a2be52c74eac311c`,
+  sideTriceps: `${SKOOL_BASE}/054c6ec4?md=ccc70c61cda44902af8ab2198bf3456c`,
+  classicSideTriceps: `${SKOOL_BASE}/054c6ec4?md=47f21ef3fb79441d99057e8892c64715`,
+  backDoubleBiceps: `${SKOOL_BASE}/054c6ec4?md=b7ad8878847c40739d8c299a4808e1db`,
+  classicBDB: `${SKOOL_BASE}/054c6ec4?md=edb61a664f2c433aa855c14f54a5b6a3`,
+  backLatSpread: `${SKOOL_BASE}/054c6ec4?md=b3f656456f334e04a96e6c5d9fee770b`,
+  absAndThighs: `${SKOOL_BASE}/054c6ec4?md=c2b661e5034a4b1d81416ecc49b506b4`,
+  mostMuscHandsCl: `${SKOOL_BASE}/054c6ec4?md=454eb67f19f746da9d26f82a0c64c0f6`,
+  mostMuscHandsHips: `${SKOOL_BASE}/054c6ec4?md=f468dcd58be74324821355168ef055f6`,
+  mostMuscCrab: `${SKOOL_BASE}/054c6ec4?md=c2ac00596ca2448f95041bbb58e5d76e`,
+  classicTeaCup: `${SKOOL_BASE}/054c6ec4?md=5ab5be31ad0344c095a7ea3caab568ef`,
+  classicAbsBiceps: `${SKOOL_BASE}/054c6ec4?md=f1f8fd43fdbd4050ad5dd44fbc3701bb`,
+  classicCrucifix: `${SKOOL_BASE}/054c6ec4?md=c9b94d7a20e345ee8f3f4efd3e77a68c`,
+  classicArnold: `${SKOOL_BASE}/054c6ec4?md=225cc871379347bea72e8c85c750c079`,
+  transQT: `${SKOOL_BASE}/054c6ec4?md=7f76056b85f5415ea986a33a4956d3de`,
+  transBB: `${SKOOL_BASE}/054c6ec4?md=73e2d723a8014bc8a89cea0905ef224b`,
+  transCP: `${SKOOL_BASE}/054c6ec4?md=9e77195ec34e45dc84ed53166e3faacf`,
+  transCPwnbf: `${SKOOL_BASE}/054c6ec4?md=abaa6795f504461390c254af4cbe8429`,
+  transClassicPoses: `${SKOOL_BASE}/054c6ec4?md=4ff0e5e23a9d48789886e48f3800c798`,
+  presIndiv: `${SKOOL_BASE}/054c6ec4?md=0693e4a44cde4c9c914d7db88b9b8970`,
+  presExDeb: `${SKOOL_BASE}/054c6ec4?md=9a36917e479745ad8082907b2f5403fb`,
+  presExInter: `${SKOOL_BASE}/054c6ec4?md=9a36917e479745ad8082907b2f5403fb`,
+  presExAvance: `${SKOOL_BASE}/054c6ec4?md=61ea7421b7634912b316628b86a5163c`,
+  presExExpert: `${SKOOL_BASE}/054c6ec4?md=43cafa55224d42e4b67d6d5baafa5aa4`,
+  routineLibre: `${SKOOL_BASE}/054c6ec4?md=24d2845705d14c5ba0fcf19c9d26c1fe`,
+  routineExDeb: `${SKOOL_BASE}/054c6ec4?md=faac063f1bc746829d74b62914d33a8f`,
+  routineExInter: `${SKOOL_BASE}/054c6ec4?md=13bf7ca5d9054bd0bedb282d49e94e47`,
+  routineExAvance: `${SKOOL_BASE}/054c6ec4?md=9daffadaeffb487498d404aaeca1ace6`,
+  routineExExpert: `${SKOOL_BASE}/054c6ec4?md=c50e9c3da54c4d6ebf8d5f4fcbae0641`,
+  exIschio: `${SKOOL_BASE}/054c6ec4?md=0bb72425f7904773b8a01450a8113385`,
+  exTendreJambes: `${SKOOL_BASE}/054c6ec4?md=d4656f72885546efb53ea275fee11be0`,
+  exRotationArnold: `${SKOOL_BASE}/054c6ec4?md=8b8f9c2314b4473c8232bb68707c8161`,
+  endurBB: `${SKOOL_BASE}/054c6ec4?md=9e79ba1193214458a862b00a89ad040a`,
+  endurCP: `${SKOOL_BASE}/054c6ec4?md=98b756ad830a4e1bbf7d0f0247cb9dd6`,
+  endurCPwnbf: `${SKOOL_BASE}/054c6ec4?md=ba05b003cf9047c5a068cc2c4469aab3`,
+  tenueScene: `${SKOOL_BASE}/054c6ec4?md=9885392fa02847ab98913b6833a56585`,
+};
+
+// ── MODULE 5 (The Classic Class) ──
+const M5 = {
+  intro: `${SKOOL_BASE}/4fadaba1?md=ecbf3208b4b64602b8654bb19bdadf28`,
+};
+
+// ── MODULE 6 (Men's Physique) ──
+const M6 = {
+  intro: `${SKOOL_BASE}/5d616307?md=12e64aa3f94a4a1e83eb8eab695f278f`,
+  frontPose: `${SKOOL_BASE}/5d616307?md=2702d42adf224de78b24fac8262dccf6`,
+  sidePose: `${SKOOL_BASE}/5d616307?md=e43d8888775e4fc386696cf61be622a1`,
+  backPoseNPC: `${SKOOL_BASE}/5d616307?md=895298f4ca4a40ccaa72c7e371e058eb`,
+  backPoseNPCmethode: `${SKOOL_BASE}/5d616307?md=698a34546f1742d0887478aff0226ff7`,
+  backPoseIFBB: `${SKOOL_BASE}/5d616307?md=508658451cb14d1ba587c40722bfc7b1`,
+  transNPC: `${SKOOL_BASE}/5d616307?md=adae749086f847758cea57ef73fbe4c3`,
+  transIFBB: `${SKOOL_BASE}/5d616307?md=be8cf7915ca24ce9bd5b6bd31dfecc6b`,
+  presIndiv: `${SKOOL_BASE}/5d616307?md=5309407de0b34a64837e97a9c1e52d0c`,
+  presNPC: `${SKOOL_BASE}/5d616307?md=83826b9ffa2d4b3cb346ad23f8591ebf`,
+  presIFBB: `${SKOOL_BASE}/5d616307?md=f3bd23952a8742dc89de8d30defa2107`,
+  presTwalk: `${SKOOL_BASE}/5d616307?md=bdeea6acee1d4584b103baf3244721c5`,
+  endurIFBB: `${SKOOL_BASE}/5d616307?md=1f5289634f5c4eae82e825340aebe6a1`,
+  endurNPC: `${SKOOL_BASE}/5d616307?md=935cb74dc3404ab6a24e20887e31857a`,
+};
+
+// ── MODULE 7 (Compétition) ──
+const M7 = {
+  intro: `${SKOOL_BASE}/23665039?md=37149473458e4cdd8ebe01d942e500bc`,
+  deroulement: `${SKOOL_BASE}/23665039?md=04325109c9094dc18ccbd8804eccc2a5`,
+  attitude: `${SKOOL_BASE}/23665039?md=55be7559f9204762881ee3400508e601`,
+  respiration: `${SKOOL_BASE}/23665039?md=25bc1c76bd974d9b81f32dd6457549e1`,
+  tan: `${SKOOL_BASE}/23665039?md=48fd70b847834470ae27923a3f63a5bd`,
+  phasesCachees: `${SKOOL_BASE}/23665039?md=f95f2cd8ea9c4dc7b15e9fe90fc01544`,
+  pumpComment: `${SKOOL_BASE}/23665039?md=691462786f04422dab38275392dbca5b`,
+  pumpRoutine: `${SKOOL_BASE}/23665039?md=cfa337487fca45c9b7d120ee48e09442`,
+};
+
+// ── Federation regulation links (Module 7) ──
+const FED_LINKS = {
+  WNBF: {
+    pres: `${SKOOL_BASE}/23665039?md=e48edc76bfee4d3a9bb61aa2a0448546`,
+    mp: `${SKOOL_BASE}/23665039?md=748ed09994bb44ee94978ffca97d6341`,
+    cp: `${SKOOL_BASE}/23665039?md=c612158c600246419ab79d907da897cc`,
+    bb: `${SKOOL_BASE}/23665039?md=53189dc2194149d58045b762206db90d`,
+  },
+  IFBB: {
+    pres: `${SKOOL_BASE}/23665039?md=57f3ec2589e042ffb3cbe9ace8b813ad`,
+    mp: `${SKOOL_BASE}/23665039?md=8b77173b0dd741c4a96ca4697eea93c5`,
+    cp: `${SKOOL_BASE}/23665039?md=ae113bfeb057423fadf48aea54bd364b`,
+    bb: `${SKOOL_BASE}/23665039?md=066444a03b7c476ab1441d236b52446d`,
+  },
+  NPC: {
+    pres: `${SKOOL_BASE}/23665039?md=57820278d48d4b9b8a2a10aa67ef0d59`,
+    mp: `${SKOOL_BASE}/23665039?md=88af55e028984bbfbc5701b5ef15397f`,
+    cp: `${SKOOL_BASE}/23665039?md=9c033485c6674e4282aa155b689c131d`,
+    bb: `${SKOOL_BASE}/23665039?md=c5f97dae91b54f5c87590052426ac87a`,
+  },
+  OCB: {
+    pres: `${SKOOL_BASE}/23665039?md=57820278d48d4b9b8a2a10aa67ef0d59`,
+    mp: `${SKOOL_BASE}/23665039?md=88af55e028984bbfbc5701b5ef15397f`,
+    cp: `${SKOOL_BASE}/23665039?md=9c033485c6674e4282aa155b689c131d`,
+    bb: `${SKOOL_BASE}/23665039?md=c5f97dae91b54f5c87590052426ac87a`,
+  },
+  ACP: {
+    pres: `${SKOOL_BASE}/23665039?md=1b052308d77c452797bf57a7684e9ebc`,
+    mp: `${SKOOL_BASE}/23665039?md=dd7475c0b7d14f4388ed4b97eddb1207`,
+    bb: `${SKOOL_BASE}/23665039?md=ad3c6391ceb0442f8e331fc5eca163a8`,
+  },
+  FFFCN: {
+    pres: `${SKOOL_BASE}/23665039?md=89edd5e3eb1a4e16a904f5df0a159764`,
+    mp: `${SKOOL_BASE}/23665039?md=c18c5de54ada4c6f8cd2f806593b43d3`,
+    cp: `${SKOOL_BASE}/23665039?md=5509b39dc4014eafacf3be039d5dcc68`,
+    bb: `${SKOOL_BASE}/23665039?md=c046dd725fb043fdbed9371f55d03860`,
+  },
+  PCA: {
+    pres: `${SKOOL_BASE}/23665039?md=4361b1ee6ce149d9b701f217e1baa50f`,
+    mp: `${SKOOL_BASE}/23665039?md=ed6fe6dc46ee4743b37e0042aa0c89ee`,
+    cp: `${SKOOL_BASE}/23665039?md=0574f6ccd6234ff1854ef5d1ab44d92c`,
+    bb: `${SKOOL_BASE}/23665039?md=cfb26069230a42d180382b16d51cdf5d`,
+  },
+  NBFI: {
+    pres: `${SKOOL_BASE}/23665039?md=115ed1cfef1b47dc9f273e5d93e5eef3`,
+    mp: `${SKOOL_BASE}/23665039?md=da3dc2d6beed40c3a2947268da220702`,
+    cp: `${SKOOL_BASE}/23665039?md=9675ad16170446e990e533d599c0506e`,
+    bb: `${SKOOL_BASE}/23665039?md=ec0a6e75a5684eff99b0c6f8c7cec25b`,
+  },
+  WABBA: {
+    pres: `${SKOOL_BASE}/23665039?md=50ff7cf414154a50bdd0c079a9b073b5`,
+    mp: `${SKOOL_BASE}/23665039?md=34879bdfe73f4975a4b6e53faef9c2e4`,
+    cp: `${SKOOL_BASE}/23665039?md=422287aa7ff84ec2864f4f8195c63995`,
+    bb: `${SKOOL_BASE}/23665039?md=70ac24e5ba6445758c606a8ffbe77700`,
+  },
+  AFBBN: {
+    pres: `${SKOOL_BASE}/23665039?md=f2182d4b7394471b98d183a17b031e8d`,
+    mp: `${SKOOL_BASE}/23665039?md=d4a264b65df84078bcf022254804520c`,
+    cp: `${SKOOL_BASE}/23665039?md=7f4852dcaab74f0bb8462cec6ec1b3c5`,
+    bb: `${SKOOL_BASE}/23665039?md=c9cba2becc05441fa08ee0cdb31b8e0c`,
+  },
+};
+
+// ── MODULE 8 (Mobilité & Activation) ──
+const M8 = {
+  intro: `${SKOOL_BASE}/5fe8e755?md=05e99f07584943c99f58e885af162d95`,
+  echauffement: `${SKOOL_BASE}/5fe8e755?md=fb29d14ec26b4af295f0eb5fa090988c`,
+  hanchePapillon: `${SKOOL_BASE}/5fe8e755?md=4b477af201424b2c977a34581a8d8da8`,
+  hancheHoward: `${SKOOL_BASE}/5fe8e755?md=0ab65a921ed94c9b8cd44b84776ca651`,
+  bassinAntever: `${SKOOL_BASE}/5fe8e755?md=ef2bdedf17e14c4fb96f42fdf77fbb70`,
+  bassinRetrover: `${SKOOL_BASE}/5fe8e755?md=ba319cae4c34434ca7efcd5ed6eb19aa`,
+  colonneCobra: `${SKOOL_BASE}/5fe8e755?md=98b0e065d20f48f5b2eb24049aaa33e3`,
+  colonneChatVache: `${SKOOL_BASE}/5fe8e755?md=77efb6110f9d46bf9b3f2dcccb395b15`,
+  colonneEnroul: `${SKOOL_BASE}/5fe8e755?md=981998f60a0e43b383ecb42d74eb200d`,
+  rotTronc4pattes: `${SKOOL_BASE}/5fe8e755?md=efdc3cc77b314c768963fe4ed5bd9379`,
+  rotTroncBaton: `${SKOOL_BASE}/5fe8e755?md=f098eeb055964ffca4b561b2e33a7931`,
+  protractionH: `${SKOOL_BASE}/5fe8e755?md=86ac822eb1d54dd9b9912fbb4124512a`,
+  protractionV: `${SKOOL_BASE}/5fe8e755?md=96dee7d358ab4fd8b575a808410c4cca`,
+  massageBalle: `${SKOOL_BASE}/5fe8e755?md=3dd682b641c74ac582b2cabfa2e8c284`,
+  massageRouleau: `${SKOOL_BASE}/5fe8e755?md=dfabcb2c5f9140828849e4a346efa867`,
+  etirTrapeze: `${SKOOL_BASE}/5fe8e755?md=2d5366f1d5d949aba4baf26e1aa91d74`,
+  rotIntElast: `${SKOOL_BASE}/5fe8e755?md=6ec869636320446bbb988ddbbd4dbaff`,
+  rotExtElast: `${SKOOL_BASE}/5fe8e755?md=9e7c5fc3677c4d23b22233a977b6b568`,
+  rotExtBDB: `${SKOOL_BASE}/5fe8e755?md=7d414582cfa144f88f1117b319428559`,
+  quadsActElast: `${SKOOL_BASE}/5fe8e755?md=fdfc52f62f59482eae65ae7d2d3f483e`,
+  ischiosActElast: `${SKOOL_BASE}/5fe8e755?md=f1aa460807714dbeb691ea0cbff60d4e`,
+  ischiosActAllonge: `${SKOOL_BASE}/5fe8e755?md=b72ede35d3334af6812a7cc27ae06cdc`,
+  grandsRonds: `${SKOOL_BASE}/5fe8e755?md=a57539cc57e04596b8df57d5defa7bb9`,
+  fessiers: `${SKOOL_BASE}/5fe8e755?md=427b4db1956349d18149c8265d82e776`,
+};
+
+// ── MODULE 9 (Vacuum) ──
+const M9 = {
+  intro: `${SKOOL_BASE}/de36522b?md=355d9fd1b5bb4db5ac14d2bcaa2576e3`,
+  toutSavoir: `${SKOOL_BASE}/de36522b?md=c854ebf78eb94047ae8f4f5fdfbbc1b0`,
+  statL1: `${SKOOL_BASE}/de36522b?md=d566c0b2df064fac899bfff746cfd0a5`,
+  statL2: `${SKOOL_BASE}/de36522b?md=66fb536393e84aaaa52aa5197acf1082`,
+  statL3: `${SKOOL_BASE}/de36522b?md=15548c9cbaa04fd2ba2b0f4e4c5f44c2`,
+  statL4: `${SKOOL_BASE}/de36522b?md=503e334047494e02b0e45b5bc6b89495`,
+  dynL5: `${SKOOL_BASE}/de36522b?md=ec324f2177704efdaf155fb6f781d3fe`,
+  dynL6: `${SKOOL_BASE}/de36522b?md=8c44916ea56945d8997115911cc62138`,
+};
+
+// ── MODULE 10, 11 ──
+const M10 = { corrections: `${SKOOL_BASE}/b45370d9` };
+const M11 = {
+  posingNote: `${SKOOL_BASE}/7dd7c0a9?md=aa74b5c31eb045adb5d35f834f666e01`,
+  partenariats: `${SKOOL_BASE}/7dd7c0a9?md=ad438663c8a8479c81432881bd0d9144`,
+};
+
+// ── MODULE 12 (Accompagnement 1:1) ──
+const M12 = {
+  mindset: `${SKOOL_BASE}/6a58266e?md=ad44f34753614e18b11e28833a095de7`,
+  onboarding: `${SKOOL_BASE}/6a58266e?md=951ec9bfec46449eac8e09ffe7e543b3`,
+  reglement: `${SKOOL_BASE}/6a58266e?md=ca375905ba7f4769ac07e0e418666761`,
+  preparerSeance: `${SKOOL_BASE}/6a58266e?md=c639cf6fb6734abfbe29251e089560fa`,
+  bilans: `${SKOOL_BASE}/6a58266e?md=6abefc037777475398e8050b1f2dea54`,
+  docSuivi: `${SKOOL_BASE}/6a58266e?md=8f8fa1c74dad4e09a59c4e4da014bc72`,
+  miseEnRelation: `${SKOOL_BASE}/6a58266e?md=e5de63ab2ea74ebf8e47947e015a27e1`,
+};
+
+const CALENDLY_DECOUVERTE = 'https://calendly.com/posing-session-reservation/appel-decouverte-posing-empire-afbbn-clone';
+
+// ══════════════════════════════════════════════
+// Helper: create a task with optional link
+// ══════════════════════════════════════════════
+function t(icon, text, link) {
+  return { icon, text, link: link || null };
+}
+
+// Get level-appropriate example link for pres/routine
+function getExampleByLevel(lvl, deb, inter, avance, expert) {
+  if (lvl <= 1) return deb;
+  if (lvl === 2) return inter;
+  if (lvl <= 4) return avance;
+  return expert;
+}
+
+// ══════════════════════════════════════════════
+// MAIN EXPORT
+// ══════════════════════════════════════════════
+export function buildTimeline(data) {
+  const weeks = [];
+  const cat = data.category;
+  const fed = data.federation;
+  const lvl = data.level;
+  const hasRoutine = data.needs.includes('routine_libre');
+  const hasPres = data.needs.includes('presentation_individuelle');
+  const isAccompagnement = data.needs.includes('accompagnement_1_1');
+  const problems = data.problems.toLowerCase();
+
+  const isMP = cat === "Men's Physique";
+  const isCP = cat === 'Classic Physique';
+  const isBB = cat === 'Bodybuilding';
+  const isNonCompet = cat === 'Non compétiteur';
+  const isCPorBB = isCP || isBB;
+  const isWNBF = fed === 'WNBF';
+  const isNPC = fed === 'NPC';
+  const isIFBB = fed === 'IFBB';
+
+  // ── Detect problems ──
+  const hasShoulderPain = /[ée]paule|shoulder/i.test(problems);
+  const hasMobility = /mobilit[ée]|omoplate|hanche|colonne|raideur|souplesse|bassin/i.test(problems);
+  const hasVacuum = /vacuum|abdo|ventre|sangle/i.test(problems);
+  const hasSymmetry = /sym[ée]tr|d[ée]s[ée]quilibr|asym/i.test(problems);
+  const hasTransitions = /transition|flu|enchaine/i.test(problems);
+  const hasDorsaux = /dorsa|lat|omoplate|protract/i.test(problems);
+  const hasRotation = /rotation|torsion|pivot/i.test(problems);
+  const hasQuads = /quad|jambe|cuisse/i.test(problems);
+  const hasIschios = /ischio|post[ée]rieur/i.test(problems);
+  const hasFessiers = /fess|glute/i.test(problems);
+  const hasSideChestIssue = /side chest/i.test(problems);
+  const hasSideRelaxIssue = /side relax/i.test(problems);
+  const hasBackIssue = /back|dos/i.test(problems);
+  const hasFrontIssue = /front/i.test(problems);
+
+  // ═══════════════════════════════════
+  // SEMAINE 1 — TON POINT DE DÉPART
+  // ═══════════════════════════════════
+  const s1Tasks = [
+    t('📹', 'Le mindset chez Posing Empire', M1.mindset),
+  ];
+  // Add category-specific intro video
+  if (isMP) s1Tasks.push(t('📹', "Men's Physique — Présentation", M1.catMP));
+  else if (isCP) s1Tasks.push(t('📹', 'Classic Physique — Présentation', M1.catCP));
+  else if (isBB) s1Tasks.push(t('📹', 'Bodybuilding — Présentation', M1.catBB));
+  else if (isNonCompet) s1Tasks.push(t('📹', 'Non compétiteur — Présentation', M1.catNonCompet));
+
+  s1Tasks.push(t('🎁', 'Les bonus Posing Empire', M1.bonus));
+  s1Tasks.push(t('🏆', 'Best Poser Award — Concours mensuel', M1.bestPoser));
+
+  weeks.push({ phase: 'Point de départ', title: 'Module 1 — Ton Point de Départ', tasks: s1Tasks });
+
+  // ═══════════════════════════════════
+  // SEMAINE 1-2 — FONDATIONS (Level 1)
+  // ═══════════════════════════════════
+  const s2Tasks = [
+    t('📖', 'Le vocabulaire du poseur', M2.vocabulaire),
+    t('📹', 'La méthodologie pour poser', M2.methodologie),
+    t('📹', 'Organiser sa pratique', M2.organiser),
+    t('📹', 'Créer son set up', M2.setup),
+  ];
+  if (!isNonCompet && !fed) {
+    s2Tasks.push(t('📹', 'Choisir sa fédération', M2.choisirFed));
+  }
+  if (hasSymmetry) {
+    s2Tasks.push(t('📹', 'La symétrie en bodybuilding', M2.symetrieBB));
+    s2Tasks.push(t('📹', 'Résoudre une asymétrie (posing)', M2.symetrieResoudre));
+    s2Tasks.push(t('📹', 'Résoudre une asymétrie (training)', M2.symetrieTraining));
+  }
+  if (hasVacuum || hasSideChestIssue) {
+    s2Tasks.push(t('📹', 'La sangle abdominale', M2.sangleAbdo));
+  }
+  if (hasDorsaux || hasBackIssue) {
+    s2Tasks.push(t('📹', 'Ouvrir les dorsaux — Théorie', M2.dorsauxTheorie));
+    s2Tasks.push(t('📹', 'Ouvrir les dorsaux — Pratique', M2.dorsauxPratique));
+  }
+  weeks.push({ phase: 'Fondations', title: 'Module 2 — Les Fondations (Level 1)', tasks: s2Tasks });
+
+  // ═══════════════════════════════════
+  // SEMAINE 3-4 — MODULE CATÉGORIE
+  // ═══════════════════════════════════
+  if (isCPorBB) {
+    // ── Classic & Body (Module 4) ──
+    const s3Tasks = [
+      t('📹', 'Introduction — Classic & Body', M4.intro),
+      t('📹', 'Placement symétrique (jambes)', M4.jambesSymetrique),
+    ];
+    if (isCP) s3Tasks.push(t('📹', 'Placement asymétrique (jambes)', M4.jambesAsymetrique));
+
+    // Quarter turns
+    s3Tasks.push(t('📹', 'Quarts de tour — Front relax', M4.frontRelax));
+    if (hasFrontIssue || hasDorsaux) s3Tasks.push(t('📹', 'Méthode de mise en place — Front relax', M4.frontRelaxMethode));
+    s3Tasks.push(t('📹', 'Quarts de tour — Side relax', M4.sideRelax));
+    if (hasSideRelaxIssue) s3Tasks.push(t('📹', 'Méthode de mise en place — Side relax', M4.sideRelaxMethode));
+    s3Tasks.push(t('📹', 'Quarts de tour — Back relax', M4.backRelax));
+    if (hasBackIssue || hasDorsaux) s3Tasks.push(t('📹', 'Méthode de mise en place — Back relax', M4.backRelaxMethode));
+
+    s3Tasks.push(t('📹', 'Tenue de scène', M4.tenueScene));
+
+    weeks.push({ phase: 'Catégorie', title: 'Module 4 — Classic & Body — Placements & Quarts de Tour', tasks: s3Tasks });
+
+    // ── Mandatories ──
+    const s4Tasks = [];
+    if (isBB || (isCP && !isWNBF)) {
+      s4Tasks.push(t('📹', 'Front Double Biceps', M4.frontDoubleBiceps));
+    }
+    if (isCP && isWNBF) {
+      s4Tasks.push(t('📹', 'Classic Front Double Biceps', M4.classicFDB));
+    }
+    if (isBB) s4Tasks.push(t('📹', 'Front Lat Spread', M4.frontLatSpread));
+    if (isBB || (isCP && !isWNBF)) {
+      s4Tasks.push(t('📹', 'Side Chest', M4.sideChest));
+    }
+    if (isCP && isWNBF) s4Tasks.push(t('📹', 'Classic Side Chest', M4.classicSideChest));
+    if (isBB || (isCP && isIFBB)) s4Tasks.push(t('📹', 'Side Triceps', M4.sideTriceps));
+    if (isCP && isWNBF) s4Tasks.push(t('📹', 'Classic Side Triceps', M4.classicSideTriceps));
+    if (isBB || (isCP && !isWNBF)) s4Tasks.push(t('📹', 'Back Double Biceps', M4.backDoubleBiceps));
+    if (isCP && isWNBF) s4Tasks.push(t('📹', 'Classic Back Double Biceps', M4.classicBDB));
+    if (isBB) s4Tasks.push(t('📹', 'Back Lat Spread', M4.backLatSpread));
+    s4Tasks.push(t('📹', 'Abs and Thighs', M4.absAndThighs));
+
+    // Most Muscular (BB only)
+    if (isBB) {
+      s4Tasks.push(t('📹', 'Most Muscular — Hands Clasped', M4.mostMuscHandsCl));
+      if (isWNBF) {
+        s4Tasks.push(t('📹', 'Most Muscular — Hands on Hips', M4.mostMuscHandsHips));
+        s4Tasks.push(t('📹', 'Most Muscular — Crab Pose', M4.mostMuscCrab));
+      }
+    }
+    // Classic poses (CP)
+    if (isCP) {
+      s4Tasks.push(t('📹', 'Classic Pose — Tea Cup', M4.classicTeaCup));
+      s4Tasks.push(t('📹', 'Classic Pose — Abs & Biceps', M4.classicAbsBiceps));
+      if (lvl >= 2) s4Tasks.push(t('📹', 'Classic Pose — Arnold Pose', M4.classicArnold));
+    }
+
+    weeks.push({ phase: 'Catégorie', title: 'Module 4 — Mandatories & Poses Obligatoires', tasks: s4Tasks });
+
+    // ── Transitions ──
+    const s5Tasks = [
+      t('📹', 'Transitions — Quarts de tour', M4.transQT),
+    ];
+    if (isBB) s5Tasks.push(t('📹', 'Transitions — Mandatories Bodybuilding', M4.transBB));
+    if (isCP && !isWNBF) s5Tasks.push(t('📹', 'Transitions — Mandatories Classic Physique', M4.transCP));
+    if (isCP && isWNBF) s5Tasks.push(t('📹', 'Transitions — Classic Physique (WNBF)', M4.transCPwnbf));
+    if (isCP) s5Tasks.push(t('📹', 'Transitions — Classic Poses', M4.transClassicPoses));
+    if (hasSideChestIssue) s5Tasks.push(t('🏋️', 'Exercice : Plaquer l\'ischio sur le side chest', M4.exIschio));
+    if (hasSideRelaxIssue) s5Tasks.push(t('🏋️', 'Exercice : Tendre les jambes sur la side relax', M4.exTendreJambes));
+
+    weeks.push({ phase: 'Catégorie', title: 'Module 4 — Transitions', tasks: s5Tasks });
+
+  } else if (isMP) {
+    // ── Men's Physique (Module 6) ──
+    const s3Tasks = [
+      t('📹', "Introduction — Men's Physique", M6.intro),
+      t('📹', 'Front Pose', M6.frontPose),
+    ];
+    if (!isNPC) s3Tasks.push(t('📹', 'Side Pose', M6.sidePose));
+    if (isNPC) {
+      s3Tasks.push(t('📹', 'Back Pose — NPC', M6.backPoseNPC));
+      if (hasBackIssue || hasDorsaux) s3Tasks.push(t('📹', 'Méthode mise en place — Back Pose NPC', M6.backPoseNPCmethode));
+    } else {
+      s3Tasks.push(t('📹', 'Back Pose — IFBB/WNBF', M6.backPoseIFBB));
+    }
+    weeks.push({ phase: 'Catégorie', title: "Module 6 — Men's Physique — Les Poses", tasks: s3Tasks });
+
+    // ── Transitions MP ──
+    const s4Tasks = [];
+    if (isNPC) s4Tasks.push(t('📹', 'Transitions — NPC', M6.transNPC));
+    else s4Tasks.push(t('📹', 'Transitions — IFBB/WNBF', M6.transIFBB));
+    weeks.push({ phase: 'Catégorie', title: "Module 6 — Men's Physique — Transitions", tasks: s4Tasks });
+
+  } else if (isNonCompet) {
+    // Foundations are enough, add some specific guidance
+    weeks.push({
+      phase: 'Catégorie',
+      title: 'Pratique — Posing Non-Compétiteur',
+      tasks: [
+        t('📹', 'Le vocabulaire du poseur (révision)', M2.vocabulaire),
+        t('🏋️', 'Exercice : Pratiquer les quarts de tour face miroir', null),
+        t('📐', 'Auto-filmage : Analyser ta posture et tes placements', null),
+      ]
+    });
+  }
+
+  // ═══════════════════════════════════
+  // SEMAINE 5 — PRÉSENTATION INDIVIDUELLE (si sélectionnée)
+  // ═══════════════════════════════════
+  if (hasPres) {
+    const presTasks = [];
+    if (isMP) {
+      presTasks.push(t('📹', 'Créer sa présentation individuelle', M6.presIndiv));
+      if (isNPC) presTasks.push(t('📹', 'Exemple : NPC I-walk', M6.presNPC));
+      else if (isWNBF) presTasks.push(t('📹', 'Exemple : T-walk (WNBF)', M6.presTwalk));
+      else presTasks.push(t('📹', 'Exemple : IFBB I-walk', M6.presIFBB));
+    } else if (isCPorBB) {
+      presTasks.push(t('📹', 'Créer sa présentation individuelle', M4.presIndiv));
+      const exLink = getExampleByLevel(lvl, M4.presExDeb, M4.presExInter, M4.presExAvance, M4.presExExpert);
+      const exLabel = lvl <= 1 ? 'Débutant' : lvl === 2 ? 'Intermédiaire' : lvl <= 4 ? 'Avancé' : 'Expert';
+      presTasks.push(t('📹', `Exemple présentation — ${exLabel}`, exLink));
+    }
+    presTasks.push(t('🎵', 'Choisir ta musique et caler les transitions', null));
+    presTasks.push(t('🏋️', 'Exercice : Chorégraphier ta présentation (60-90 sec)', null));
+    weeks.push({ phase: 'Création', title: 'Présentation Individuelle', tasks: presTasks });
+  }
+
+  // ═══════════════════════════════════
+  // SEMAINE 5-6 — ROUTINE LIBRE (si sélectionnée)
+  // ═══════════════════════════════════
+  if (hasRoutine) {
+    const routineTasks = [
+      t('📹', 'Créer sa routine libre — De A à Z', M4.routineLibre),
+    ];
+    const exLink = getExampleByLevel(lvl, M4.routineExDeb, M4.routineExInter, M4.routineExAvance, M4.routineExExpert);
+    const exLabel = lvl <= 1 ? 'Débutant' : lvl === 2 ? 'Intermédiaire' : lvl <= 4 ? 'Avancé' : 'Expert';
+    routineTasks.push(t('📹', `Exemple routine libre — ${exLabel}`, exLink));
+    routineTasks.push(t('🎵', 'Synchroniser musique + transitions + poses highlight', null));
+    routineTasks.push(t('🏋️', 'Exercice : Chorégraphier ta routine (60-90 sec)', null));
+    weeks.push({ phase: 'Création', title: 'Routine Libre', tasks: routineTasks });
+  }
+
+  // ═══════════════════════════════════
+  // MOBILITÉ & ACTIVATION (Module 8)
+  // ═══════════════════════════════════
+  if (hasMobility || hasShoulderPain || hasDorsaux || hasRotation || hasQuads || hasIschios || hasFessiers || hasBackIssue) {
+    const mobTasks = [
+      t('📹', 'Introduction — Mobilité & Activation', M8.intro),
+      t('📹', 'Échauffement posing sessions', M8.echauffement),
+    ];
+    if (hasMobility) {
+      mobTasks.push(t('🧘', 'Mobilité de hanche — Le papillon', M8.hanchePapillon));
+      mobTasks.push(t('🧘', 'Mobilité de hanche — Howard lunge stretch', M8.hancheHoward));
+      mobTasks.push(t('🧘', 'Bassin — Antéversion', M8.bassinAntever));
+      mobTasks.push(t('🧘', 'Mobilité de colonne — Cobra', M8.colonneCobra));
+      mobTasks.push(t('🧘', 'Mobilité de colonne — Chat-vache', M8.colonneChatVache));
+    }
+    if (hasRotation || hasSideChestIssue || hasSideRelaxIssue) {
+      mobTasks.push(t('🧘', 'Rotation de tronc — 4 pattes', M8.rotTronc4pattes));
+      mobTasks.push(t('🧘', 'Rotation de tronc — Bâton', M8.rotTroncBaton));
+    }
+    if (hasDorsaux || hasBackIssue) {
+      mobTasks.push(t('🧘', 'Protraction omoplates — Horizontale', M8.protractionH));
+      mobTasks.push(t('🧘', 'Protraction omoplates — Verticale rouleau', M8.protractionV));
+      mobTasks.push(t('🧘', 'Massage avec rouleau', M8.massageRouleau));
+    }
+    if (hasShoulderPain) {
+      mobTasks.push(t('🧘', 'Massage avec balle (trapèzes)', M8.massageBalle));
+      mobTasks.push(t('🧘', 'Étirements des trapèzes', M8.etirTrapeze));
+      mobTasks.push(t('🧘', 'Rotation interne épaule (élastique)', M8.rotIntElast));
+      mobTasks.push(t('🧘', 'Rotation externe épaule (élastique)', M8.rotExtElast));
+    }
+    if (hasQuads) {
+      mobTasks.push(t('💪', 'Quads activation avec élastique', M8.quadsActElast));
+    }
+    if (hasIschios || hasBackIssue) {
+      mobTasks.push(t('💪', 'Ischios activation avec élastique', M8.ischiosActElast));
+      mobTasks.push(t('💪', 'Ischios activation allongé', M8.ischiosActAllonge));
+    }
+    if (hasFessiers || hasBackIssue) {
+      mobTasks.push(t('💪', 'Activation des fessiers (squeeze glutes)', M8.fessiers));
+    }
+    if (hasDorsaux) {
+      mobTasks.push(t('💪', 'Activation des grands ronds', M8.grandsRonds));
+    }
+    weeks.push({ phase: 'Mobilité', title: 'Module 8 — Mobilité & Activation', tasks: mobTasks });
+  }
+
+  // ═══════════════════════════════════
+  // VACUUM (Module 9) — si Classic Physique ou problème vacuum
+  // ═══════════════════════════════════
+  if (hasVacuum || isCP) {
+    const vacTasks = [
+      t('📹', 'Introduction — Module Vacuum', M9.intro),
+      t('📹', 'Tout savoir sur le vacuum', M9.toutSavoir),
+      t('🏋️', 'Level 1 — Vacuum quadrupède statique', M9.statL1),
+      t('🏋️', 'Level 2 — Vacuum allongé statique', M9.statL2),
+      t('🏋️', 'Level 3 — Vacuum penché statique', M9.statL3),
+      t('🏋️', 'Level 4 — Vacuum sur pose statique', M9.statL4),
+    ];
+    if (lvl >= 2) {
+      vacTasks.push(t('🏋️', 'Level 5 — Vacuum penché dynamique', M9.dynL5));
+      vacTasks.push(t('🏋️', 'Level 6 — Vacuum sur pose dynamique', M9.dynL6));
+    }
+    weeks.push({ phase: 'Vacuum', title: 'Module 9 — Vacuum', tasks: vacTasks });
+  }
+
+  // ═══════════════════════════════════
+  // ROUND D'ENDURANCE
+  // ═══════════════════════════════════
+  if (!isNonCompet) {
+    const endTasks = [];
+    if (isBB) endTasks.push(t('📹', 'Round d\'endurance — Bodybuilding', M4.endurBB));
+    else if (isCP && isWNBF) endTasks.push(t('📹', 'Round d\'endurance — Classic Physique (WNBF)', M4.endurCPwnbf));
+    else if (isCP) endTasks.push(t('📹', 'Round d\'endurance — Classic Physique', M4.endurCP));
+    else if (isMP && isNPC) endTasks.push(t('📹', 'Round d\'endurance — NPC', M6.endurNPC));
+    else if (isMP) endTasks.push(t('📹', 'Round d\'endurance — IFBB/WNBF', M6.endurIFBB));
+
+    endTasks.push(t('🏋️', 'Exercice : Run-through complet toutes poses minuté', null));
+    endTasks.push(t('📐', 'Auto-filmage : Analyser endurance et tenue des poses', null));
+
+    weeks.push({ phase: 'Performance', title: 'Round d\'Endurance', tasks: endTasks });
+  }
+
+  // ═══════════════════════════════════
+  // THE CLASSIC CLASS (Module 5) — CP/BB, après 30j
+  // ═══════════════════════════════════
+  if (isCPorBB && lvl >= 2) {
+    weeks.push({
+      phase: 'Avancé',
+      title: 'Module 5 — The Classic Class (Level 3)',
+      tasks: [
+        t('📹', 'Introduction — The Classic Class', M5.intro),
+        t('🏋️', 'Poses artistiques avancées, placements au sol, variantes haut du corps', null),
+        t('⚠️', 'Module disponible après 30 jours d\'adhésion au Skool', null),
+      ]
+    });
+  }
+
+  // ═══════════════════════════════════
+  // COMPÉTITION (Module 7) — pour compétiteurs
+  // ═══════════════════════════════════
+  if (!isNonCompet) {
+    const compTasks = [
+      t('📹', 'Introduction — Compétition', M7.intro),
+      t('📹', 'Le déroulement d\'une compétition', M7.deroulement),
+      t('📹', 'Attitude scénique', M7.attitude),
+      t('📹', 'La respiration sur scène', M7.respiration),
+      t('📹', 'Le tan', M7.tan),
+      t('📹', 'Les phases cachées d\'une prép', M7.phasesCachees),
+      t('📹', 'Comment pumper (congestionner)', M7.pumpComment),
+      t('📹', 'Routine pump backstage', M7.pumpRoutine),
+    ];
+
+    // ── Federation-specific regulation ──
+    const fedLinks = FED_LINKS[fed];
+    if (fedLinks) {
+      compTasks.push(t('📋', `Présentation fédération — ${fed}`, fedLinks.pres));
+      const catKey = isMP ? 'mp' : isCP ? 'cp' : 'bb';
+      if (fedLinks[catKey]) {
+        compTasks.push(t('📋', `Règlement ${cat} — ${fed}`, fedLinks[catKey]));
+      }
+    }
+
+    weeks.push({ phase: 'Compétition', title: 'Module 7 — Compétition (Level 4)', tasks: compTasks });
+  }
+
+  // ═══════════════════════════════════
+  // CORRECTIONS QUOTIDIENNES & RESSOURCES
+  // ═══════════════════════════════════
+  weeks.push({
+    phase: 'Communauté',
+    title: 'Corrections Quotidiennes & Ressources',
+    tasks: [
+      t('📹', 'Corrections quotidiennes — Poster tes poses pour feedback', M10.corrections),
+      t('📓', 'Posing Note — Carnet de suivi de tes séances', M11.posingNote),
+      t('🤝', 'Les partenariats Posing Empire (codes promo)', M11.partenariats),
+    ]
+  });
+
+  // ═══════════════════════════════════
+  // ACCOMPAGNEMENT 1:1 (Module 12)
+  // ═══════════════════════════════════
+  if (isAccompagnement) {
+    weeks.push({
+      phase: 'Accompagnement',
+      title: 'Module 12 — Accompagnement 1:1',
+      tasks: [
+        t('📹', 'Le mindset de winner 🏆', M12.mindset),
+        t('📹', 'Onboarding accompagnement', M12.onboarding),
+        t('📋', 'Règlement accompagnement', M12.reglement),
+        t('📹', 'Préparer notre séance de coaching', M12.preparerSeance),
+        t('📹', 'Bien faire ses bilans', M12.bilans),
+        t('📹', 'Le document de suivi', M12.docSuivi),
+        t('🤝', 'Mise en relation (juges & organisateurs)', M12.miseEnRelation),
+      ]
+    });
+  } else {
+    weeks.push({
+      phase: 'Accompagnement',
+      title: 'Passer au niveau supérieur ?',
+      tasks: [
+        t('🚀', 'Découvre l\'accompagnement 1:1 avec Manaël', CALENDLY_DECOUVERTE),
+        t('📞', 'Réserve ton appel de découverte gratuit', CALENDLY_DECOUVERTE),
+      ]
+    });
+  }
+
+  // ═══════════════════════════════════
+  // BILAN HEBDOMADAIRE (Module 3)
+  // ═══════════════════════════════════
+  weeks.push({
+    phase: 'Suivi',
+    title: 'Module 3 — Bilan Hebdomadaire',
+    tasks: [
+      t('📋', 'Remplis ton bilan hebdomadaire chaque semaine', `${SKOOL_BASE}/b7c4b94e?md=45bd1c69cb85435bbe2c7ae108ad8812`),
+      t('📐', 'Analyse tes progrès et ajuste ta roadmap', null),
+      t('🏆', 'Tu es sur la bonne voie — continue !', null),
+    ]
+  });
+
+  return weeks;
+}
