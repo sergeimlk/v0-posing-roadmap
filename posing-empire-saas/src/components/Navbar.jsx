@@ -3,7 +3,7 @@ export default function Navbar() {
     <nav id="navbar" className="navbar">
       <div className="nav-container">
         <div className="nav-brand">
-          <img src="/posing-empire.svg" alt="Posing Empire Logo" className="nav-logo-img" />
+          <img src="/p.png" alt="Posing Empire Logo" className="nav-logo-img" />
           <span className="nav-brand-text">POSING EMPIRE</span>
         </div>
         <div className="nav-right">

@@ -402,13 +402,19 @@ export default function FormScreen({ onSubmit }) {
             animate={shakeField === 'consent' ? { x: [-6, 6, -6, 6, 0] } : {}}
             transition={{ duration: 0.4 }}
           >
-            <label className="privacy-checkbox-label">
+            <label className="privacy-checkbox-card">
               <input
                 type="checkbox"
-                className="privacy-checkbox-input"
                 checked={consentAccepted}
                 onChange={(e) => setConsentAccepted(e.target.checked)}
               />
+              <span className="checkbox-visual">
+                <span className="check-icon">
+                  <svg viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8.5L6.5 12L13 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
+              </span>
               <span className="privacy-checkbox-text">
                 J'accepte les <button type="button" className="legal-btn-link" onClick={() => setShowLegalModal('cgu')}>CGU</button> et la <button type="button" className="legal-btn-link" onClick={() => setShowLegalModal('rgpd')}>Politique de Confidentialité (RGPD)</button> de Posing Empire. <span className="required">*</span>
               </span>
