@@ -88,7 +88,9 @@ export default function RoadmapScreen({ data, onRestart }) {
         <div className="roadmap-page">
           {/* HEADER */}
           <div className="roadmap-header">
-            <div className="roadmap-header-stars">✦ ✦</div>
+            <div className="roadmap-logo-container">
+              <img src="/posing-empire.svg" alt="Posing Empire Logo" className="roadmap-logo" />
+            </div>
             <div className="roadmap-brand">
               <span className="text-white-gradient">POSING </span>
               <span className="text-gold-gradient">EMPIRE</span>
@@ -148,8 +150,7 @@ export default function RoadmapScreen({ data, onRestart }) {
                 transition={{ delay: i * 0.08, duration: 0.5, ease: 'easeOut' }}
               >
                 <div className="timeline-left">
-                  <span className="timeline-week">S{String(i + 1).padStart(2, '0')}</span>
-                  <div className="timeline-number">{String(i + 1).padStart(2, '0')}</div>
+                  <div className="timeline-number">S{String(i + 1).padStart(2, '0')}</div>
                   <div className="timeline-line"></div>
                 </div>
                 <div className="timeline-content">
@@ -193,7 +194,7 @@ export default function RoadmapScreen({ data, onRestart }) {
           {/* FOOTER */}
           <div className="roadmap-footer">
             <div className="roadmap-footer-brand">POSING EMPIRE — COACHING PROFESSIONNEL DE POSE</div>
-            <div className="roadmap-footer-url">www.posingempire.com · skool.com/manael</div>
+            <div className="roadmap-footer-url">www.posingempire.com · skool.com/posing-empire-groupe-prive-6566</div>
           </div>
         </div>
       </motion.div>

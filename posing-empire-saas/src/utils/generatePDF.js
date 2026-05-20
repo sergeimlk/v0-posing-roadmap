@@ -6,12 +6,21 @@ export async function generatePDF(elementId, fullname) {
     const element = document.getElementById(elementId);
     if (!element) throw new Error('Element not found');
 
+    // Add CSS class for html2canvas compatibility (solid fallbacks, fixed width)
+    element.classList.add('html2canvas-container');
+
+    // Wait a tiny bit for layout recalculation
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     const canvas = await html2canvas(element, {
       backgroundColor: '#050505',
       scale: 2,
       useCORS: true,
       logging: false,
     });
+
+    // Remove class immediately after rendering
+    element.classList.remove('html2canvas-container');
 
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');

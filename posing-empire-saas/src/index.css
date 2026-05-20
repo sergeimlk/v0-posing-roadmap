@@ -506,3 +506,240 @@ body {
   .roadmap-footer { padding: 1rem; }
   .timeline-content { padding: 0.75rem 1rem; }
 }
+
+/* ══════════════ ADDITIONAL LOGO & BRANDING STYLES ══════════════ */
+.nav-logo-img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  margin-right: 0.75rem;
+}
+.roadmap-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.roadmap-logo {
+  height: 90px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ══════════════ TEXT SIZE OPTIMIZATIONS ══════════════ */
+.form-card label {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #ddd !important;
+}
+.form-card input[type="text"],
+.form-card textarea {
+  font-size: 0.95rem !important;
+}
+.selector-btn {
+  font-size: 0.95rem !important;
+}
+.selector-btn-sm {
+  font-size: 0.9rem !important;
+}
+.checkbox-title {
+  font-size: 0.95rem !important;
+}
+.checkbox-desc {
+  font-size: 0.8rem !important;
+}
+.info-label {
+  font-size: 0.8rem !important;
+}
+.info-value {
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+}
+.roadmap-section-title {
+  font-size: 1.2rem !important;
+  font-weight: 800 !important;
+}
+.timeline-number {
+  font-size: 0.85rem !important;
+  font-weight: 800 !important;
+  width: 44px !important;
+  height: 44px !important;
+}
+.timeline-phase {
+  font-size: 0.75rem !important;
+}
+.timeline-title {
+  font-size: 1.15rem !important;
+}
+.timeline-task {
+  font-size: 0.95rem !important;
+}
+
+/* ══════════════ HTML2CANVAS EXPORT FIXES ══════════════ */
+.html2canvas-container {
+  width: 800px !important;
+  min-width: 800px !important;
+  max-width: 800px !important;
+  padding: 0 !important;
+  margin: 0 auto !important;
+  background: #050505 !important;
+  position: relative !important;
+  transform: none !important;
+}
+.html2canvas-container .text-gold-gradient {
+  background: none !important;
+  -webkit-text-fill-color: #D4A843 !important;
+  color: #D4A843 !important;
+}
+.html2canvas-container .text-white-gradient {
+  background: none !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+.html2canvas-container .btn-primary-gold,
+.html2canvas-container .btn-secondary,
+.html2canvas-container .timeline-task-link svg,
+.html2canvas-container .link-arrow {
+  display: none !important;
+}
+
+/* ══════════════ LOADING GLASSMORPHISM ══════════════ */
+.loading-wrapper {
+  background: rgba(18, 18, 18, 0.75) !important;
+  border: 1px solid rgba(212, 168, 67, 0.15) !important;
+  border-radius: 24px !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  padding: 3.5rem 2.5rem !important;
+  max-width: 480px !important;
+  width: 90% !important;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  margin: auto !important;
+}
+.loading-logo-img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ══════════════ GDPR & CGU UI ══════════════ */
+.privacy-consent-group {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+.privacy-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+.privacy-checkbox-input {
+  margin-top: 0.25rem;
+  width: 16px;
+  height: 16px;
+  accent-color: #D4A843;
+  cursor: pointer;
+}
+.privacy-checkbox-text {
+  font-size: 0.85rem !important;
+  color: #aaa !important;
+  line-height: 1.4;
+  font-weight: 400 !important;
+}
+.legal-btn-link {
+  background: none;
+  border: none;
+  color: #FFD54F;
+  text-decoration: underline;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: inline;
+}
+.legal-btn-link:hover {
+  color: #B8942D;
+}
+
+/* ══════════════ GLASSMORPHISM LEGAL MODAL ══════════════ */
+.legal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1.5rem;
+}
+.legal-modal-card {
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.92), rgba(10, 10, 10, 0.97));
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 550px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+.legal-modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.legal-modal-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #FFD54F;
+}
+.legal-modal-close {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+.legal-modal-close:hover {
+  color: #fff;
+}
+.legal-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  font-size: 0.9rem;
+  color: #ccc;
+  line-height: 1.6;
+  text-align: left;
+}
+.legal-modal-body h4 {
+  color: #fff;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.legal-modal-body p {
+  margin-bottom: 1rem;
+  color: #aaa;
+}
+.legal-modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-modal-close {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.9rem;
+}

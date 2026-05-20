@@ -54,6 +54,8 @@ export default function FormScreen({ onSubmit }) {
   });
 
   const [shakeField, setShakeField] = useState(null);
+  const [consentAccepted, setConsentAccepted] = useState(false);
+  const [showLegalModal, setShowLegalModal] = useState(null); // 'cgu' | 'rgpd' | null
 
   const updateField = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -76,6 +78,7 @@ export default function FormScreen({ onSubmit }) {
     if (formData.category !== 'Non compétiteur' && !formData.federation) { triggerShake('federation'); return; }
     if (formData.level === null) { triggerShake('level'); return; }
     if (!formData.time) { triggerShake('time'); return; }
+    if (!consentAccepted) { triggerShake('consent'); return; }
 
     // Collect data
     const submissionData = {
@@ -180,10 +183,14 @@ export default function FormScreen({ onSubmit }) {
                 className="form-group"
                 id="group-federation"
                 key="federation-group"
-                animate={shakeField === 'federation' ? { x: [-6, 6, -6, 6, 0] } : {}}
-                transition={{ duration: 0.4 }}
                 initial={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
-                animate={{ opacity: 1, height: 'auto', marginBottom: '1.5rem' }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                  marginBottom: '1.5rem',
+                  x: shakeField === 'federation' ? [-6, 6, -6, 6, 0] : 0
+                }}
+                transition={{ duration: 0.4 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
               >
                 <label>Fédération <span className="required">*</span></label>
@@ -388,9 +395,91 @@ export default function FormScreen({ onSubmit }) {
             </svg>
           </motion.button>
 
-          <p className="form-privacy">Tes données sont utilisées uniquement pour personnaliser ta roadmap.</p>
+          {/* RGPD Consent */}
+          <motion.div
+            className="form-group privacy-consent-group"
+            id="group-consent"
+            animate={shakeField === 'consent' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label className="privacy-checkbox-label">
+              <input
+                type="checkbox"
+                className="privacy-checkbox-input"
+                checked={consentAccepted}
+                onChange={(e) => setConsentAccepted(e.target.checked)}
+              />
+              <span className="privacy-checkbox-text">
+                J'accepte les <button type="button" className="legal-btn-link" onClick={() => setShowLegalModal('cgu')}>CGU</button> et la <button type="button" className="legal-btn-link" onClick={() => setShowLegalModal('rgpd')}>Politique de Confidentialité (RGPD)</button> de Posing Empire. <span className="required">*</span>
+              </span>
+            </label>
+          </motion.div>
+
+          <p className="form-privacy">
+            Vos données de profil sont traitées de manière sécurisée pour générer votre roadmap personnalisée.
+          </p>
         </form>
       </motion.div>
+
+      {/* Glassmorphism Legal Modal */}
+      <AnimatePresence>
+        {showLegalModal && (
+          <motion.div
+            className="legal-modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowLegalModal(null)}
+          >
+            <motion.div
+              className="legal-modal-card"
+              initial={{ scale: 0.95, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 20, opacity: 0 }}
+              transition={{ type: 'spring', duration: 0.5 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="legal-modal-header">
+                <h3>{showLegalModal === 'cgu' ? "Conditions Générales d'Utilisation" : "Politique de Confidentialité (RGPD)"}</h3>
+                <button className="legal-modal-close" onClick={() => setShowLegalModal(null)}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              <div className="legal-modal-body">
+                {showLegalModal === 'cgu' ? (
+                  <>
+                    <h4>1. Objet</h4>
+                    <p>Les présentes CGU régissent l'accès et l'utilisation de l'application d'onboarding Posing Empire permettant de générer une feuille de route d'apprentissage personnalisée.</p>
+                    <h4>2. Propriété Intellectuelle</h4>
+                    <p>L'ensemble des contenus (roadmaps, cursus, vidéos, guides, textes et visuels) est la propriété exclusive de Posing Empire. Toute reproduction, redistribution ou revente est strictement interdite.</p>
+                    <h4>3. Responsabilité</h4>
+                    <p>Les programmes et conseils techniques de pose proposés sont fournis à titre indicatif et éducatif. Posing Empire ne saurait être tenu responsable des blessures ou accidents survenant durant la pratique autonome.</p>
+                    <h4>4. Modification</h4>
+                    <p>Posing Empire se réserve le droit de modifier le contenu des services et les présentes conditions à tout moment.</p>
+                  </>
+                ) : (
+                  <>
+                    <h4>1. Données Collectées</h4>
+                    <p>Nous collectons votre nom, catégorie de pose, niveau d'expérience, objectifs physiques, problématiques rencontrées et disponibilités, uniquement via ce formulaire.</p>
+                    <h4>2. Finalité du Traitement</h4>
+                    <p>Ces informations sont traitées dans le but unique d'établir votre roadmap d'apprentissage personnalisée et de faciliter votre onboarding vers notre plateforme communautaire Skool.</p>
+                    <h4>3. Conservation et Sécurité</h4>
+                    <p>Vos données sont conservées de manière sécurisée et ne sont jamais vendues, louées ou transmises à des tiers sans votre consentement explicite.</p>
+                    <h4>4. Vos Droits (RGPD)</h4>
+                    <p>Conformément à la réglementation européenne (RGPD), vous bénéficiez d'un droit d'accès, de modification et de suppression de vos données. Pour toute demande, contactez : contact@posingempire.com.</p>
+                  </>
+                )}
+              </div>
+              <div className="legal-modal-footer">
+                <button className="btn-primary-gold btn-modal-close" onClick={() => setShowLegalModal(null)}>Fermer</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

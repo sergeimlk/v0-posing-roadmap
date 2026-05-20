@@ -3,7 +3,7 @@ export default function Navbar() {
     <nav id="navbar" className="navbar">
       <div className="nav-container">
         <div className="nav-brand">
-          <div className="nav-logo-icon">PE</div>
+          <img src="/posing-empire.svg" alt="Posing Empire Logo" className="nav-logo-img" />
           <span className="nav-brand-text">POSING EMPIRE</span>
         </div>
         <div className="nav-right">
@@ -16,7 +16,7 @@ export default function Navbar() {
             Site Principal
           </a>
           <a
-            href="https://www.skool.com/manael"
+            href="https://www.skool.com/posing-empire-groupe-prive-6566"
             className="nav-cta-btn"
             target="_blank"
             rel="noopener noreferrer"
