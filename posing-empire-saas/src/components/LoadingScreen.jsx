@@ -50,7 +50,7 @@ export default function LoadingScreen({ onComplete, formData }) {
         <div className="loading-ring">
           <div className="ring-segment"></div>
           <div className="ring-inner">
-            <img src="/posing-empire.svg" alt="PE Logo" className="loading-logo-img" />
+            <img src="/posing-empire.svg" alt="PE Logo" className="loading-logo-img" draggable="false" style={{ pointerEvents: 'none', userSelect: 'none' }} />
           </div>
         </div>
 

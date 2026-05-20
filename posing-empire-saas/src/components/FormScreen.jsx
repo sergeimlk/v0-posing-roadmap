@@ -164,7 +164,7 @@ export default function FormScreen({ onSubmit }) {
                 <motion.button
                   key={cat.value}
                   type="button"
-                  className={`selector-btn${formData.category === cat.value ? ' selected' : ''}`}
+                  className={`selector-btn${formData.category === cat.value ? ' selected' : ''}${cat.value === 'Non compétiteur' ? ' category-btn-full' : ''}`}
                   onClick={() => updateField('category', cat.value)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -426,6 +426,21 @@ export default function FormScreen({ onSubmit }) {
           </p>
         </form>
       </motion.div>
+
+      {/* Beta Suggestions Footer */}
+      <div className="beta-footer">
+        <span className="beta-badge">Version Beta</span>
+        <p className="beta-text">
+          Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
+        </p>
+        <div className="beta-links">
+          <a href="mailto:contact@posingempire.com" className="beta-link">contact@posingempire.com</a>
+          <a href="https://www.instagram.com/posing_empire" target="_blank" rel="noopener noreferrer" className="beta-link">Instagram @posing_empire</a>
+        </div>
+        <p className="beta-thankyou">
+          Merci infiniment pour ton aide et ta contribution précieuse ! 🙏
+        </p>
+      </div>
 
       {/* Glassmorphism Legal Modal */}
       <AnimatePresence>

@@ -59,7 +59,7 @@ export default function RoadmapScreen({ data, onRestart }) {
           whileTap={{ y: 0 }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
           </svg>
           <span>{downloading ? 'Génération en cours...' : 'Télécharger ma Roadmap PDF'}</span>
         </motion.button>
@@ -70,8 +70,8 @@ export default function RoadmapScreen({ data, onRestart }) {
           whileTap={{ y: 0 }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M1 4v6h6M23 20v-6h-6"/>
-            <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            <path d="M1 4v6h6M23 20v-6h-6" />
+            <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" />
           </svg>
           <span>Recommencer</span>
         </motion.button>
@@ -89,12 +89,14 @@ export default function RoadmapScreen({ data, onRestart }) {
           {/* HEADER */}
           <div className="roadmap-header">
             <div className="roadmap-logo-container">
-              <img src="/posing-empire.svg" alt="Posing Empire Logo" className="roadmap-logo" />
+              <img src="/posing-empire.svg" alt="Posing Empire Logo" className="roadmap-logo" draggable="false" style={{ pointerEvents: 'none', userSelect: 'none' }} />
             </div>
+            {/* 
             <div className="roadmap-brand">
               <span className="text-white-gradient">POSING </span>
               <span className="text-gold-gradient">EMPIRE</span>
             </div>
+            */}
             <div className="roadmap-program-label">ROAD MAP — PROGRAMME PERSONNALISÉ</div>
           </div>
 
@@ -193,11 +195,26 @@ export default function RoadmapScreen({ data, onRestart }) {
 
           {/* FOOTER */}
           <div className="roadmap-footer">
-            <div className="roadmap-footer-brand">POSING EMPIRE — COACHING PROFESSIONNEL DE POSE</div>
-            <div className="roadmap-footer-url">www.posingempire.com · skool.com/posing-empire-groupe-prive-6566</div>
+            <div className="roadmap-footer-brand">POSING EMPIRE — COACHING PROFESSIONNEL DE POSING</div>
+            <div className="roadmap-footer-url">© 2026 Posing Empire · www.posingempire.com</div>
           </div>
         </div>
       </motion.div>
+
+      {/* Beta Suggestions Footer */}
+      <div className="beta-footer">
+        <span className="beta-badge">Version Beta</span>
+        <p className="beta-text">
+          Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
+        </p>
+        <div className="beta-links">
+          <a href="mailto:contact@posingempire.com" className="beta-link">contact@posingempire.com</a>
+          <a href="https://www.instagram.com/posing_empire" target="_blank" rel="noopener noreferrer" className="beta-link">Instagram @posing_empire</a>
+        </div>
+        <p className="beta-thankyou">
+          Merci infiniment pour ton aide et ta contribution précieuse ! 🙏
+        </p>
+      </div>
     </main>
   );
 }
