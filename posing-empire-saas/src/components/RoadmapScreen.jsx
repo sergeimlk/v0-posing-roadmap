@@ -209,7 +209,7 @@ export default function RoadmapScreen({ data, onRestart }) {
         </p>
         <div className="beta-links">
           <a href="mailto:contact@posingempire.com" className="beta-link">contact@posingempire.com</a>
-          <a href="https://www.instagram.com/posing_empire" target="_blank" rel="noopener noreferrer" className="beta-link">Instagram @posing_empire</a>
+          <a href="https://www.instagram.com/manael.posing/" target="_blank" rel="noopener noreferrer" className="beta-link">Instagram @posing_empire</a>
         </div>
         <p className="beta-thankyou">
           Merci infiniment pour ton aide et ta contribution précieuse ! 🙏
