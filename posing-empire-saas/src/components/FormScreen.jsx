@@ -250,7 +250,7 @@ export default function FormScreen({ onSubmit }) {
               name="fullname"
               placeholder="Ex: Manaël Dupont"
               required
-              autocomplete="name"
+              autoComplete="name"
               value={formData.fullname}
               onChange={(e) => updateField('fullname', e.target.value)}
             />

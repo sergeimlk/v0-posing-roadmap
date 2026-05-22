@@ -680,7 +680,7 @@ body {
 }
 .privacy-checkbox-card {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.875rem;
   cursor: pointer;
   user-select: none;
@@ -703,7 +703,7 @@ body {
   outline-offset: 2px;
 }
 .privacy-checkbox-card .checkbox-visual {
-  margin-top: 3px;
+  margin-top: 0;
   flex-shrink: 0;
 }
 .privacy-checkbox-card input:checked ~ .checkbox-visual {
