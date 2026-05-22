@@ -150,7 +150,7 @@ body {
 }
 
 .form-group { margin-bottom: 1.5rem; }
-.form-group label:not(.checkbox-card) {
+.form-group label:not(.checkbox-card):not(.privacy-checkbox-card) {
   display: block; font-size: 0.8125rem; font-weight: 600; color: #ccc;
   margin-bottom: 0.5rem; letter-spacing: 0.02em;
 }
