@@ -1093,7 +1093,7 @@ body {
   z-index: 1;
   max-width: 900px;
   margin: 0 auto;
-  padding: 7rem 1.25rem 4rem;
+  padding: 4.5rem 1.25rem 4rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1110,6 +1110,12 @@ body {
   max-width: 700px;
 }
 @media (max-width: 640px) {
+  .select-mode-wrapper {
+    padding: 2rem 1rem 2rem;
+  }
+  .select-mode-header {
+    margin-bottom: 1.5rem;
+  }
   .select-mode-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
