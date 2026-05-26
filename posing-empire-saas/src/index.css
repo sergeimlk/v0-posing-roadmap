@@ -192,7 +192,15 @@ body {
 
 @media (max-width: 639px) {
   .nav-brand-text {
-    display: none;
+    display: block;
+    font-size: 0.725rem;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+  }
+
+  .nav-logo-img {
+    height: 28px !important;
+    margin-right: 0.4rem !important;
   }
   
   .nav-right {
