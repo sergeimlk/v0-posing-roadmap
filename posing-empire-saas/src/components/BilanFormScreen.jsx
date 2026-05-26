@@ -134,18 +134,35 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
     );
   }, []);
 
+  useEffect(() => {
+    if (formData.level === null) return;
+    gsap.fromTo('.level-dot.active .dot-circle',
+      { scale: 0.8 },
+      { scale: 1, duration: 0.45, ease: 'back.out(2.5)', overwrite: 'auto' }
+    );
+  }, [formData.level]);
+
   const updateField = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   }, []);
 
-  const toggleChip = useCallback((field, value) => {
+  const animateChipClick = useCallback((target) => {
+    if (!target) return;
+    gsap.fromTo(target,
+      { scale: 0.94 },
+      { scale: 1, duration: 0.35, ease: 'back.out(2.2)', overwrite: 'auto' }
+    );
+  }, []);
+
+  const toggleChip = useCallback((field, value, e) => {
+    if (e && e.currentTarget) animateChipClick(e.currentTarget);
     setFormData(prev => ({
       ...prev,
       [field]: prev[field].includes(value)
         ? prev[field].filter(v => v !== value)
         : [...prev[field], value],
     }));
-  }, []);
+  }, [animateChipClick]);
 
   const triggerShake = useCallback((field) => {
     setShakeField(field);
@@ -277,7 +294,8 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                   key={cat.value}
                   type="button"
                   className={`selector-btn${formData.category === cat.value ? ' selected' : ''}`}
-                  onClick={() => {
+                  onClick={(e) => {
+                    animateChipClick(e.currentTarget);
                     updateField('category', cat.value);
                     if (cat.value !== 'Autre') updateField('categoryOther', '');
                     if (cat.value === 'Non compétiteur') {
@@ -335,7 +353,8 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                       key={fed.value}
                       type="button"
                       className={`selector-btn selector-btn-sm${formData.federation === fed.value ? ' selected' : ''}`}
-                      onClick={() => {
+                      onClick={(e) => {
+                        animateChipClick(e.currentTarget);
                         updateField('federation', fed.value);
                         if (fed.value !== 'Autre') updateField('federationOther', '');
                       }}
@@ -466,7 +485,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                   key={chip.value}
                   type="button"
                   className={`bilan-chip${formData.workDone.includes(chip.value) ? ' selected' : ''}`}
-                  onClick={() => toggleChip('workDone', chip.value)}
+                  onClick={(e) => toggleChip('workDone', chip.value, e)}
                   aria-pressed={formData.workDone.includes(chip.value)}
                 >
                   {chip.label}
@@ -491,7 +510,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                   key={chip.value}
                   type="button"
                   className={`bilan-chip${formData.difficulties.includes(chip.value) ? ' selected' : ''}`}
-                  onClick={() => toggleChip('difficulties', chip.value)}
+                  onClick={(e) => toggleChip('difficulties', chip.value, e)}
                   aria-pressed={formData.difficulties.includes(chip.value)}
                 >
                   {chip.label}
@@ -516,7 +535,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                   key={chip.value}
                   type="button"
                   className={`bilan-chip${formData.mobilityZones.includes(chip.value) ? ' selected' : ''}`}
-                  onClick={() => toggleChip('mobilityZones', chip.value)}
+                  onClick={(e) => toggleChip('mobilityZones', chip.value, e)}
                   aria-pressed={formData.mobilityZones.includes(chip.value)}
                 >
                   {chip.label}

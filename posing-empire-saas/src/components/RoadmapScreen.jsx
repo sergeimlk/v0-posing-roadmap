@@ -55,6 +55,37 @@ export default function RoadmapScreen({ data, onRestart }) {
     );
   }, []);
 
+  const shakeLock = useCallback((index, e) => {
+    if (index === 0) return; // M01 is not locked
+    const container = e.currentTarget.closest('.timeline-item');
+    if (!container) return;
+    const lockIcon = container.querySelector('.timeline-number svg');
+    const lockBadge = container.querySelector('.lock-badge');
+    
+    // Animate lock icon: slight scale up and rapid rotate left/right (wiggle)
+    if (lockIcon) {
+      gsap.killTweensOf(lockIcon);
+      gsap.timeline()
+        .to(lockIcon, { scale: 1.25, duration: 0.1, ease: 'power1.out' })
+        .to(lockIcon, { rotation: -12, duration: 0.08 })
+        .to(lockIcon, { rotation: 12, duration: 0.08 })
+        .to(lockIcon, { rotation: -8, duration: 0.08 })
+        .to(lockIcon, { rotation: 8, duration: 0.08 })
+        .to(lockIcon, { rotation: 0, scale: 1, duration: 0.15, ease: 'power1.inOut' });
+    }
+
+    if (lockBadge) {
+      gsap.killTweensOf(lockBadge);
+      gsap.timeline()
+        .to(lockBadge, { scale: 1.1, duration: 0.1, ease: 'power1.out' })
+        .to(lockBadge, { x: -3, duration: 0.08 })
+        .to(lockBadge, { x: 3, duration: 0.08 })
+        .to(lockBadge, { x: -2, duration: 0.08 })
+        .to(lockBadge, { x: 2, duration: 0.08 })
+        .to(lockBadge, { x: 0, scale: 1, duration: 0.15, ease: 'power1.inOut' });
+    }
+  }, []);
+
   const timeline = buildTimeline(data);
 
   const needsDisplay = data.needs.length
@@ -207,7 +238,12 @@ export default function RoadmapScreen({ data, onRestart }) {
                     <div 
                       className="accordion-header" 
                       onClick={() => toggleSection(i)}
-                      onMouseEnter={() => !isFirst && setHoveredIndex(i)}
+                      onMouseEnter={(e) => {
+                        if (!isFirst) {
+                          setHoveredIndex(i);
+                          shakeLock(i, e);
+                        }
+                      }}
                       onMouseLeave={() => !isFirst && setHoveredIndex(null)}
                       style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                       role="button"

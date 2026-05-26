@@ -108,6 +108,14 @@ export default function FormScreen({ onSubmit }) {
   }, []);
 
   useEffect(() => {
+    if (formData.level === null) return;
+    gsap.fromTo('.level-dot.active .dot-circle',
+      { scale: 0.8 },
+      { scale: 1, duration: 0.45, ease: 'back.out(2.5)', overwrite: 'auto' }
+    );
+  }, [formData.level]);
+
+  useEffect(() => {
     if (!showLegalModal) return;
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -118,11 +126,20 @@ export default function FormScreen({ onSubmit }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showLegalModal]);
 
+  const animateChipClick = useCallback((target) => {
+    if (!target) return;
+    gsap.fromTo(target,
+      { scale: 0.94 },
+      { scale: 1, duration: 0.35, ease: 'back.out(2.2)', overwrite: 'auto' }
+    );
+  }, []);
+
   const updateField = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   }, []);
 
-  const handleCategoryToggle = useCallback((val) => {
+  const handleCategoryToggle = useCallback((val, e) => {
+    if (e && e.currentTarget) animateChipClick(e.currentTarget);
     setFormData(prev => {
       let nextCategories = prev.categories || [];
       if (val === 'Non compétiteur') {
@@ -158,9 +175,10 @@ export default function FormScreen({ onSubmit }) {
       }
       return next;
     });
-  }, []);
+  }, [animateChipClick]);
 
-  const handleFederationToggle = useCallback((val) => {
+  const handleFederationToggle = useCallback((val, e) => {
+    if (e && e.currentTarget) animateChipClick(e.currentTarget);
     setFormData(prev => {
       let nextFeds = prev.federations || [];
       if (nextFeds.includes(val)) {
@@ -174,9 +192,10 @@ export default function FormScreen({ onSubmit }) {
       }
       return next;
     });
-  }, []);
+  }, [animateChipClick]);
 
-  const handleStageIntentChange = useCallback((val) => {
+  const handleStageIntentChange = useCallback((val, e) => {
+    if (e && e.currentTarget) animateChipClick(e.currentTarget);
     setFormData(prev => {
       const next = { ...prev, stageIntent: val };
       if (val === 'no_stage') {
@@ -190,25 +209,30 @@ export default function FormScreen({ onSubmit }) {
       }
       return next;
     });
-  }, []);
+  }, [animateChipClick]);
 
-  const toggleProblem = useCallback((probValue) => {
+  const toggleProblem = useCallback((probValue, e) => {
+    if (e && e.currentTarget) animateChipClick(e.currentTarget);
     setFormData(prev => ({
       ...prev,
       selectedProblems: prev.selectedProblems.includes(probValue)
         ? prev.selectedProblems.filter(p => p !== probValue)
         : [...prev.selectedProblems, probValue]
     }));
-  }, []);
+  }, [animateChipClick]);
 
-  const toggleNeed = useCallback((need) => {
+  const toggleNeed = useCallback((need, e) => {
+    if (e && e.currentTarget) {
+      const card = e.currentTarget.closest('.checkbox-card');
+      if (card) animateChipClick(card);
+    }
     setFormData(prev => ({
       ...prev,
       needs: prev.needs.includes(need)
         ? prev.needs.filter(n => n !== need)
         : [...prev.needs, need],
     }));
-  }, []);
+  }, [animateChipClick]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -337,7 +361,7 @@ export default function FormScreen({ onSubmit }) {
                     key={cat.value}
                     type="button"
                     className={`selector-btn${isSelected ? ' selected' : ''}`}
-                    onClick={() => handleCategoryToggle(cat.value)}
+                    onClick={(e) => handleCategoryToggle(cat.value, e)}
                     aria-pressed={isSelected}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -398,7 +422,7 @@ export default function FormScreen({ onSubmit }) {
                       key={opt.value}
                       type="button"
                       className={`selector-btn selector-btn-sm${formData.stageIntent === opt.value ? ' selected' : ''}`}
-                      onClick={() => handleStageIntentChange(opt.value)}
+                      onClick={(e) => handleStageIntentChange(opt.value, e)}
                       aria-pressed={formData.stageIntent === opt.value}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
@@ -437,7 +461,7 @@ export default function FormScreen({ onSubmit }) {
                         key={fed.value}
                         type="button"
                         className={`selector-btn selector-btn-sm${isSelected ? ' selected' : ''}`}
-                        onClick={() => handleFederationToggle(fed.value)}
+                        onClick={(e) => handleFederationToggle(fed.value, e)}
                         aria-pressed={isSelected}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -499,7 +523,10 @@ export default function FormScreen({ onSubmit }) {
                       key={opt.value}
                       type="button"
                       className={`selector-btn selector-btn-sm${formData.hasShorts === opt.value ? ' selected' : ''}`}
-                      onClick={() => updateField('hasShorts', opt.value)}
+                      onClick={(e) => {
+                        animateChipClick(e.currentTarget);
+                        updateField('hasShorts', opt.value);
+                      }}
                       aria-pressed={formData.hasShorts === opt.value}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
@@ -571,7 +598,7 @@ export default function FormScreen({ onSubmit }) {
                     key={prob.value}
                     type="button"
                     className={`problem-chip${isSelected ? ' selected' : ''}`}
-                    onClick={() => toggleProblem(prob.value)}
+                    onClick={(e) => toggleProblem(prob.value, e)}
                     role="checkbox"
                     aria-checked={isSelected}
                   >
@@ -617,7 +644,10 @@ export default function FormScreen({ onSubmit }) {
                   key={t.value}
                   type="button"
                   className={`selector-btn selector-btn-sm${formData.time === t.value ? ' selected' : ''}`}
-                  onClick={() => updateField('time', t.value)}
+                  onClick={(e) => {
+                    animateChipClick(e.currentTarget);
+                    updateField('time', t.value);
+                  }}
                   aria-pressed={formData.time === t.value}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -638,7 +668,7 @@ export default function FormScreen({ onSubmit }) {
                   name="needs"
                   value="routine_libre"
                   checked={formData.needs.includes('routine_libre')}
-                  onChange={() => toggleNeed('routine_libre')}
+                  onChange={(e) => toggleNeed('routine_libre', e)}
                 />
                 <span className="checkbox-visual">
                   <span className="check-icon">
@@ -658,7 +688,7 @@ export default function FormScreen({ onSubmit }) {
                   name="needs"
                   value="presentation_individuelle"
                   checked={formData.needs.includes('presentation_individuelle')}
-                  onChange={() => toggleNeed('presentation_individuelle')}
+                  onChange={(e) => toggleNeed('presentation_individuelle', e)}
                 />
                 <span className="checkbox-visual">
                   <span className="check-icon">
