@@ -113,8 +113,8 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
 
   const [shakeField, setShakeField] = useState(null);
 
-  const submitBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
-  const backBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
+  const submitBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15, maxTravelX: 6, maxTravelY: 10 });
+  const backBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15, maxTravelX: 12, maxTravelY: 12 });
   const cardRef = useTilt({ maxTilt: 2, scale: 1.002 });
 
   useEffect(() => {

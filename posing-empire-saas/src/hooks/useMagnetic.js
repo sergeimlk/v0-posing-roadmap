@@ -11,7 +11,13 @@ import gsap from 'gsap';
  * @param {number} options.textStrength Magnetic pull intensity for internal text/icon elements (parallax)
  * @param {number} options.radius Distance threshold in pixels around the element
  */
-export default function useMagnetic({ strength = 0.35, textStrength = 0.15, radius = 60 } = {}) {
+export default function useMagnetic({ 
+  strength = 0.35, 
+  textStrength = 0.15, 
+  radius = 60,
+  maxTravelX = 16,
+  maxTravelY = 16
+} = {}) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -38,10 +44,21 @@ export default function useMagnetic({ strength = 0.35, textStrength = 0.15, radi
 
       // Check if mouse is within interactive boundary
       if (distance < radius + rect.width / 2) {
+        let targetX = dx * strength;
+        let targetY = dy * strength;
+
+        // Clamp the values to keep the element within safe boundaries
+        if (Math.abs(targetX) > maxTravelX) {
+          targetX = Math.sign(targetX) * maxTravelX;
+        }
+        if (Math.abs(targetY) > maxTravelY) {
+          targetY = Math.sign(targetY) * maxTravelY;
+        }
+
         // Move container towards mouse
         gsap.to(el, {
-          x: dx * strength,
-          y: dy * strength,
+          x: targetX,
+          y: targetY,
           duration: 0.4,
           ease: 'power2.out',
           overwrite: 'auto',
@@ -49,18 +66,30 @@ export default function useMagnetic({ strength = 0.35, textStrength = 0.15, radi
 
         // Add subtle parallax depth by moving internal text and icon at slightly different strengths
         if (textElement) {
+          let textX = dx * textStrength;
+          let textY = dy * textStrength;
+          // Clamp internal text movement to 70% of parent's max travel to keep text inside button padding
+          if (Math.abs(textX) > maxTravelX * 0.7) textX = Math.sign(textX) * maxTravelX * 0.7;
+          if (Math.abs(textY) > maxTravelY * 0.7) textY = Math.sign(textY) * maxTravelY * 0.7;
+
           gsap.to(textElement, {
-            x: dx * textStrength,
-            y: dy * textStrength,
+            x: textX,
+            y: textY,
             duration: 0.4,
             ease: 'power2.out',
             overwrite: 'auto',
           });
         }
         if (svgElement) {
+          let svgX = dx * (textStrength * 1.3);
+          let svgY = dy * (textStrength * 1.3);
+          // Clamp internal SVG movement to 80% of parent's max travel
+          if (Math.abs(svgX) > maxTravelX * 0.8) svgX = Math.sign(svgX) * maxTravelX * 0.8;
+          if (Math.abs(svgY) > maxTravelY * 0.8) svgY = Math.sign(svgY) * maxTravelY * 0.8;
+
           gsap.to(svgElement, {
-            x: dx * (textStrength * 1.3),
-            y: dy * (textStrength * 1.3),
+            x: svgX,
+            y: svgY,
             duration: 0.4,
             ease: 'power2.out',
             overwrite: 'auto',
@@ -108,7 +137,7 @@ export default function useMagnetic({ strength = 0.35, textStrength = 0.15, radi
       el.removeEventListener('mousemove', handleMouseMove);
       el.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [strength, textStrength, radius]);
+  }, [strength, textStrength, radius, maxTravelX, maxTravelY]);
 
   return ref;
 }
