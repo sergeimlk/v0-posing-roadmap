@@ -1728,6 +1728,10 @@ body {
   margin-bottom: 0.25rem;
 }
 
+.timeline-header-meta .timeline-phase {
+  margin-bottom: 0 !important;
+}
+
 .lock-badge {
   display: inline-flex;
   align-items: center;
