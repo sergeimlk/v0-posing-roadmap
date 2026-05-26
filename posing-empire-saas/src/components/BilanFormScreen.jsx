@@ -1,6 +1,9 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
+import gsap from 'gsap';
+import useMagnetic from '../hooks/useMagnetic';
+import useTilt from '../hooks/useTilt';
 
 // ── Reusable constants (same as onboarding) ──
 const CATEGORIES = [
@@ -110,6 +113,27 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
 
   const [shakeField, setShakeField] = useState(null);
 
+  const submitBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
+  const backBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
+  const cardRef = useTilt({ maxTilt: 2, scale: 1.002 });
+
+  useEffect(() => {
+    gsap.fromTo('.form-header > *', 
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power2.out' }
+    );
+    gsap.fromTo('.form-card', 
+      { opacity: 0, y: 25 },
+      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' },
+      0.2
+    );
+    gsap.fromTo('.form-group',
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' },
+      0.3
+    );
+  }, []);
+
   const updateField = useCallback((field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   }, []);
@@ -210,7 +234,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
         </div>
 
         {/* Form Card */}
-        <form className="form-card" autoComplete="off" onSubmit={handleSubmit}>
+        <form ref={cardRef} className="form-card" autoComplete="off" onSubmit={handleSubmit}>
           <div className="form-gold-line"></div>
 
           {/* ═══ SECTION 1: Profil ═══ */}
@@ -581,29 +605,27 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
 
           {/* Submit */}
           <div className="form-actions">
-            <motion.button
+            <button
+              ref={backBtnRef}
               type="button"
               className="btn-secondary-gold"
               onClick={onBack}
-              whileHover={{ y: -1 }}
-              whileTap={{ y: 0 }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
               <span>Retour</span>
-            </motion.button>
-            <motion.button
+            </button>
+            <button
+              ref={submitBtnRef}
               type="submit"
-              className="btn-submit"
-              whileHover={{ y: -2, boxShadow: '0 8px 30px rgba(212,168,67,0.4)' }}
-              whileTap={{ y: 0 }}
+              className="btn-primary-gold btn-submit"
             >
               <span>Générer ma Roadmap</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </motion.button>
+            </button>
           </div>
         </form>
       </motion.div>

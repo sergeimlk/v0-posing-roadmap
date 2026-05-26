@@ -1,22 +1,22 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
 import { buildBilanRoadmap } from '../utils/buildBilanRoadmap';
 import { generatePDF } from '../utils/generatePDF';
+import gsap from 'gsap';
+import useMagnetic from '../hooks/useMagnetic';
 
 const LEVEL_LABELS = ['Débutant', 'Novice', 'Intermédiaire', 'Confirmé', 'Avancé', 'Expert'];
 
-function SectionHeader({ icon, title, delay = 0 }) {
+function SectionHeader({ icon, title }) {
   return (
-    <motion.div
+    <div
       className="bilan-road-section-header"
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay, duration: 0.5 }}
+      style={{ opacity: 0 }}
     >
       <span className="bilan-road-section-icon" aria-hidden="true">{icon}</span>
       <h2 className="bilan-road-section-title">{title}</h2>
-    </motion.div>
+    </div>
   );
 }
 
@@ -37,6 +37,24 @@ function VideoLink({ text, link }) {
 
 export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
   const [downloading, setDownloading] = useState(false);
+  
+  const downloadBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
+  const restartBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
+
+  useEffect(() => {
+    gsap.fromTo('.roadmap-header > *', 
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' }
+    );
+    gsap.fromTo('.info-item', 
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: 'power2.out', delay: 0.2 }
+    );
+    gsap.fromTo('.bilan-road-section-header, .bilan-road-section', 
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.6, stagger: 0.05, ease: 'power2.out', delay: 0.4 }
+    );
+  }, []);
   const roadmap = buildBilanRoadmap(data);
   const { meta, bilan, priorites, planAction, ressources, objectifs, calendlyLink } = roadmap;
 
@@ -71,30 +89,28 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <motion.button
+        <button
+          ref={downloadBtnRef}
           className="btn-primary-gold btn-download"
           onClick={handleDownload}
           disabled={downloading}
-          whileHover={{ y: -2, boxShadow: '0 8px 30px rgba(212,168,67,0.4)' }}
-          whileTap={{ y: 0 }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
           </svg>
           <span>{downloading ? 'Génération en cours...' : 'Télécharger ma Roadmap PDF'}</span>
-        </motion.button>
-        <motion.button
+        </button>
+        <button
+          ref={restartBtnRef}
           className="btn-secondary-gold btn-restart"
           onClick={onRestart}
-          whileHover={{ y: -1 }}
-          whileTap={{ y: 0 }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M1 4v6h6M23 20v-6h-6" />
             <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" />
           </svg>
           <span>Refaire le bilan</span>
-        </motion.button>
+        </button>
       </motion.div>
 
       {/* ROADMAP CONTENT */}
@@ -145,12 +161,10 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
           </div>
 
           {/* ═══ BILAN DE LA SEMAINE ═══ */}
-          <SectionHeader icon="📋" title="Bilan de la semaine" delay={0.1} />
-          <motion.div
+          <SectionHeader icon="📋" title="Bilan de la semaine" />
+          <div
             className="bilan-road-section"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.15, duration: 0.5 }}
+            style={{ opacity: 0 }}
           >
             <div className="bilan-road-subsection">
               <div className="bilan-road-sub-label success">✅ Points forts</div>
@@ -164,31 +178,27 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
                 {bilan.pointsAAmeliorer.map((pt, i) => <li key={i}>{pt}</li>)}
               </ul>
             </div>
-          </motion.div>
+          </div>
 
           {/* ═══ PRIORITÉS DE LA SEMAINE ═══ */}
-          <SectionHeader icon="🎯" title="Priorités de la semaine" delay={0.2} />
-          <motion.div
+          <SectionHeader icon="🎯" title="Priorités de la semaine" />
+          <div
             className="bilan-road-section"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.25, duration: 0.5 }}
+            style={{ opacity: 0 }}
           >
             <ol className="bilan-road-priorities">
               {priorites.map((p, i) => <li key={i}>{p}</li>)}
             </ol>
-          </motion.div>
+          </div>
 
           {/* ═══ PLAN D'ACTION ═══ */}
-          <SectionHeader icon="📅" title="Plan d'action" delay={0.3} />
+          <SectionHeader icon="📅" title="Plan d'action" />
 
           {/* Mobilité */}
           {hasMobilite && (
-            <motion.div
+            <div
               className="bilan-road-section bilan-road-action-block"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.5 }}
+              style={{ opacity: 0 }}
             >
               <div className="bilan-road-action-title">🧘 Mobilité</div>
               {planAction.mobilite.map((ex, i) => (
@@ -198,16 +208,14 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
                   <VideoLink text="Voir la vidéo" link={ex.link} />
                 </div>
               ))}
-            </motion.div>
+            </div>
           )}
 
           {/* Activation musculaire */}
           {hasActivation && (
-            <motion.div
+            <div
               className="bilan-road-section bilan-road-action-block"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
+              style={{ opacity: 0 }}
             >
               <div className="bilan-road-action-title">💪 Activation musculaire</div>
               {planAction.activation.map((ex, i) => (
@@ -217,16 +225,14 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
                   <VideoLink text="Voir la vidéo" link={ex.link} />
                 </div>
               ))}
-            </motion.div>
+            </div>
           )}
 
           {/* Vacuum */}
           {hasVacuum && (
-            <motion.div
+            <div
               className="bilan-road-section bilan-road-action-block"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45, duration: 0.5 }}
+              style={{ opacity: 0 }}
             >
               <div className="bilan-road-action-title">💨 Vacuum</div>
               {planAction.vacuum.map((v, i) => (
@@ -236,16 +242,14 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
                   <VideoLink text={v.linkLabel} link={v.link} />
                 </div>
               ))}
-            </motion.div>
+            </div>
           )}
 
           {/* Posing Technique */}
           {(hasPoses || hasTransitions || hasCorrections) && (
-            <motion.div
+            <div
               className="bilan-road-section bilan-road-action-block"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
+              style={{ opacity: 0 }}
             >
               <div className="bilan-road-action-title">🎭 Posing technique</div>
 
@@ -281,16 +285,14 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
                   ))}
                 </div>
               )}
-            </motion.div>
+            </div>
           )}
 
           {/* Routine libre */}
           {hasRoutine && (
-            <motion.div
+            <div
               className="bilan-road-section bilan-road-action-block"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.55, duration: 0.5 }}
+              style={{ opacity: 0 }}
             >
               <div className="bilan-road-action-title">🎬 Routine libre / Présentation</div>
               {planAction.routineLibre.map((r, i) => (
@@ -298,16 +300,14 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
                   <VideoLink text={r.text} link={r.link} />
                 </div>
               ))}
-            </motion.div>
+            </div>
           )}
 
           {/* ═══ RESSOURCES DE LA SEMAINE ═══ */}
-          <SectionHeader icon="📚" title="Ressources de la semaine" delay={0.6} />
-          <motion.div
+          <SectionHeader icon="📚" title="Ressources de la semaine" />
+          <div
             className="bilan-road-section"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.65, duration: 0.5 }}
+            style={{ opacity: 0 }}
           >
             <table className="bilan-road-table">
               <thead>
@@ -336,15 +336,13 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
                 ))}
               </tbody>
             </table>
-          </motion.div>
+          </div>
 
           {/* ═══ OBJECTIFS DE LA SEMAINE ═══ */}
-          <SectionHeader icon="✅" title="Objectifs de la semaine" delay={0.7} />
-          <motion.div
+          <SectionHeader icon="✅" title="Objectifs de la semaine" />
+          <div
             className="bilan-road-section"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.75, duration: 0.5 }}
+            style={{ opacity: 0 }}
           >
             <div className="bilan-road-objectives">
               <div className="bilan-road-obj-main">
@@ -364,15 +362,13 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* ═══ CTA CALENDLY ═══ */}
           {!meta.isAccompagnement && (
-            <motion.div
+            <div
               className="bilan-road-section bilan-road-cta"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
+              style={{ opacity: 0 }}
             >
               <div className="bilan-road-cta-icon" aria-hidden="true">📞</div>
               <div className="bilan-road-cta-title">Tu veux aller plus loin ?</div>
@@ -390,7 +386,7 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </a>
-            </motion.div>
+            </div>
           )}
 
           {/* FOOTER */}

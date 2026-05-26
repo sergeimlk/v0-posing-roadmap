@@ -157,27 +157,76 @@ body {
   -webkit-text-fill-color: #ffffff;
 }
 
+.nav-brand-link {
+  text-decoration: none;
+  display: block;
+}
+
 .nav-right {
   display: flex;
   align-items: center;
   gap: 1.25rem;
 }
 
-.nav-link {
+.nav-circle-link {
   font-size: 0.8125rem;
   color: #999;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.2s, background 0.3s, border-color 0.3s, transform 0.3s;
   display: none;
 }
 
-.nav-link:hover {
+.nav-circle-link:hover {
   color: #D4A843;
 }
 
+.nav-link-icon {
+  display: none;
+}
+
 @media (min-width: 640px) {
-  .nav-link {
+  .nav-circle-link {
     display: block;
+  }
+}
+
+@media (max-width: 639px) {
+  .nav-brand-text {
+    display: none;
+  }
+  
+  .nav-right {
+    gap: 0.75rem;
+  }
+  
+  .nav-circle-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(18, 18, 18, 0.75);
+    border: 1px solid rgba(212, 168, 67, 0.18);
+    color: #D4A843;
+  }
+  
+  .nav-circle-link:hover,
+  .nav-circle-link:active {
+    background: rgba(212, 168, 67, 0.12);
+    border-color: #D4A843;
+    color: #ffd54f;
+    transform: translateY(-1px);
+  }
+  
+  .nav-link-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .nav-link-text {
+    display: none;
   }
 }
 
@@ -191,7 +240,7 @@ body {
   text-decoration: none;
   color: #050505;
   background: linear-gradient(135deg, #FFD54F, #D4A843, #B8942D);
-  transition: all 0.3s;
+  transition: background 0.3s, box-shadow 0.3s, border-color 0.3s, transform 0.3s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -202,6 +251,53 @@ body {
 .nav-cta-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 20px rgba(212, 168, 67, 0.3);
+}
+
+.skool-mobile-logo {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .nav-skool-btn {
+    width: 42px;
+    height: 42px;
+    min-height: 42px;
+    border-radius: 50%;
+    padding: 0;
+    background: rgba(18, 18, 18, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+  }
+  
+  .nav-skool-btn:hover,
+  .nav-skool-btn:active {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+    box-shadow: none;
+  }
+  
+  .skool-desktop-text {
+    display: none;
+  }
+  
+  .skool-mobile-logo {
+    display: flex;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-weight: 900;
+    font-size: 0.85rem;
+    letter-spacing: -0.04em;
+    gap: 0.5px;
+  }
+  
+  .skool-mobile-logo .s { color: #3b82f6; }
+  .skool-mobile-logo .k { color: #D93829; }
+  .skool-mobile-logo .o1 { color: #F2A104; }
+  .skool-mobile-logo .o2 { color: #4FAAD9; }
+  .skool-mobile-logo .l { color: #D93829; }
 }
 
 /* ══════════════ SCREENS ══════════════ */
@@ -663,7 +759,7 @@ body {
   border: none;
   border-radius: 9999px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.3s, box-shadow 0.3s, border-color 0.3s, opacity 0.3s, color 0.3s;
   position: relative;
   overflow: hidden;
   min-height: 48px;
@@ -685,7 +781,6 @@ body {
 }
 
 .btn-primary-gold:hover {
-  transform: translateY(-2px);
   box-shadow: 0 8px 30px rgba(212, 168, 67, 0.4);
 }
 
@@ -708,14 +803,13 @@ body {
   border: 1.5px solid rgba(212, 168, 67, 0.4);
   border-radius: 9999px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.3s, box-shadow 0.3s, border-color 0.3s, opacity 0.3s, color 0.3s;
   min-height: 48px;
 }
 
 .btn-secondary-gold:hover {
   background: rgba(212, 168, 67, 0.08);
   border-color: rgba(212, 168, 67, 0.7);
-  transform: translateY(-1px);
 }
 
 .btn-submit {
@@ -723,6 +817,42 @@ body {
   margin-top: 0.5rem;
   font-size: 0.95rem;
   padding: 1rem;
+}
+
+/* ── Form Actions Block (Responsive Stack) ── */
+.form-actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .form-actions {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .form-actions .btn-submit {
+    width: auto;
+    margin-top: 0;
+    flex-grow: 1;
+    max-width: 320px;
+  }
+  
+  .form-actions .btn-secondary-gold {
+    width: auto;
+  }
+}
+
+@media (max-width: 639px) {
+  .form-actions .btn-secondary-gold,
+  .form-actions .btn-primary-gold {
+    width: 100% !important;
+  }
 }
 
 .form-privacy {

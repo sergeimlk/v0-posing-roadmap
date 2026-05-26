@@ -1,8 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
 import { buildTimeline } from '../utils/buildTimeline';
 import { generatePDF } from '../utils/generatePDF';
+import gsap from 'gsap';
+import useMagnetic from '../hooks/useMagnetic';
 
 const LEVEL_LABELS = ['Débutant total', 'Novice', 'Intermédiaire', 'Confirmé', 'Avancé', 'Expert'];
 const NEEDS_LABELS = {
@@ -19,6 +21,31 @@ export default function RoadmapScreen({ data, onRestart }) {
   const [downloading, setDownloading] = useState(false);
   const [openIndices, setOpenIndices] = useState([0]);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const downloadBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
+  const restartBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
+
+  useEffect(() => {
+    // 1. Stagger entry for client info and header elements
+    gsap.fromTo('.roadmap-header > *', 
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out' }
+    );
+    gsap.fromTo('.info-item', 
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: 'power2.out', delay: 0.2 }
+    );
+    // 2. Stagger reveal for months blocks in the timeline
+    gsap.fromTo('.timeline-item', 
+      { opacity: 0, x: -20 },
+      { opacity: 1, x: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out', delay: 0.4 }
+    );
+    // 3. Dynamic scale animation for the timeline line itself
+    gsap.fromTo('.timeline-line',
+      { scaleY: 0, transformOrigin: 'top center' },
+      { scaleY: 1, duration: 1.5, ease: 'power3.out', delay: 0.6 }
+    );
+  }, []);
   
   const toggleSection = useCallback((index) => {
     setOpenIndices(prev =>
@@ -61,30 +88,28 @@ export default function RoadmapScreen({ data, onRestart }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <motion.button
+        <button
+          ref={downloadBtnRef}
           className="btn-primary-gold btn-download"
           onClick={handleDownload}
           disabled={downloading}
-          whileHover={{ y: -2, boxShadow: '0 8px 30px rgba(212,168,67,0.4)' }}
-          whileTap={{ y: 0 }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
           </svg>
           <span>{downloading ? 'Génération en cours...' : 'Télécharger ma Roadmap PDF'}</span>
-        </motion.button>
-        <motion.button
+        </button>
+        <button
+          ref={restartBtnRef}
           className="btn-secondary-gold btn-restart"
           onClick={onRestart}
-          whileHover={{ y: -1 }}
-          whileTap={{ y: 0 }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M1 4v6h6M23 20v-6h-6" />
             <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" />
           </svg>
           <span>Recommencer</span>
-        </motion.button>
+        </button>
       </motion.div>
 
       {/* PDF-RENDERABLE ROADMAP */}
@@ -159,12 +184,10 @@ export default function RoadmapScreen({ data, onRestart }) {
               const isHovered = hoveredIndex === i;
 
               return (
-                <motion.div
+                <div
                   key={i}
                   className={`timeline-item ${!isFirst ? 'locked' : ''}`}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.08, duration: 0.5, ease: 'easeOut' }}
+                  style={{ opacity: 0 }}
                 >
                   <div className="timeline-left">
                     <div className={`timeline-number ${!isFirst ? 'locked-number' : ''}`}>
@@ -305,7 +328,7 @@ export default function RoadmapScreen({ data, onRestart }) {
                       )}
                     </AnimatePresence>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
