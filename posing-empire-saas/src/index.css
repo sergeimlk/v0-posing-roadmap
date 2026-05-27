@@ -193,9 +193,10 @@ body {
 @media (max-width: 639px) {
   .nav-brand-text {
     display: block;
-    font-size: 0.725rem;
-    letter-spacing: 0.12em;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
     font-weight: 700;
+    white-space: nowrap;
   }
 
   .nav-logo-img {
@@ -267,13 +268,13 @@ body {
 
 @media (max-width: 639px) {
   .nav-skool-btn {
-    width: 80px;
+    width: 84px;
     height: 42px;
     min-height: 42px;
-    border-radius: 9999px;
+    border-radius: 42px; /* 2 times height */
     padding: 0;
     background: rgba(18, 18, 18, 0.75);
-    border: 1px solid rgba(212, 168, 67, 0.18);
+    border: 1px solid rgba(212, 168, 67, 0.6); /* Gold contour */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1726,15 +1727,18 @@ body {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.25rem;
+  flex-wrap: wrap;
 }
 
 .timeline-header-meta .timeline-phase {
   margin-bottom: 0 !important;
+  line-height: 1.2;
 }
 
 .lock-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   font-size: 0.7rem;
   font-weight: 600;
   color: #a8a8a8;
@@ -1742,6 +1746,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 0.15rem 0.5rem;
   border-radius: 4px;
+  line-height: 1;
 }
 
 .timeline-number.locked-number {

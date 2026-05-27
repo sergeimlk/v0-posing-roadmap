@@ -56,9 +56,26 @@ export default function useMagnetic({
         }
 
         // Move container towards mouse
+        let finalX = targetX;
+        let finalY = targetY;
+
+        // Ensure element doesn't escape its parent
+        const parentRect = el.parentElement?.getBoundingClientRect();
+        if (parentRect) {
+          const maxLeft = parentRect.left - rect.left;
+          const maxRight = parentRect.right - rect.right;
+          const maxTop = parentRect.top - rect.top;
+          const maxBottom = parentRect.bottom - rect.bottom;
+          
+          if (finalX < maxLeft) finalX = maxLeft;
+          if (finalX > maxRight) finalX = maxRight;
+          if (finalY < maxTop) finalY = maxTop;
+          if (finalY > maxBottom) finalY = maxBottom;
+        }
+
         gsap.to(el, {
-          x: targetX,
-          y: targetY,
+          x: finalX,
+          y: finalY,
           duration: 0.4,
           ease: 'power2.out',
           overwrite: 'auto',
