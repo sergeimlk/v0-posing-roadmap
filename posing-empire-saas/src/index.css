@@ -224,18 +224,19 @@ body {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background: rgba(18, 18, 18, 0.75);
-    border: 1px solid rgba(212, 168, 67, 0.18);
-    color: #D4A843;
+    background: rgba(18, 15, 23, 0.45) !important;
+    border: 1px solid rgba(212, 168, 67, 0.18) !important;
+    box-shadow: 0 0 15px rgba(212, 168, 67, 0.05) !important;
     margin-top: -2px !important;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   
   .nav-circle-link:hover,
   .nav-circle-link:active {
-    background: rgba(212, 168, 67, 0.12);
-    border-color: #D4A843;
-    color: #ffd54f;
-    transform: translateY(-1px);
+    background: rgba(212, 168, 67, 0.1) !important;
+    border-color: #D4A843 !important;
+    box-shadow: 0 0 20px rgba(212, 168, 67, 0.2) !important;
+    transform: translateY(-1.5px);
   }
   
   .nav-link-icon {

@@ -11,15 +11,7 @@ export default function Navbar() {
   const dockItems = [
     {
       icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-roadmap)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
-          <defs>
-            <linearGradient id="gold-grad-roadmap" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FFD54F" />
-              <stop offset="30%" stopColor="#D4A843" />
-              <stop offset="70%" stopColor="#B8942D" />
-              <stop offset="100%" stopColor="#FFD54F" />
-            </linearGradient>
-          </defs>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-nav-roadmap)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
           <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
           <line x1="9" y1="3" x2="9" y2="18" />
           <line x1="15" y1="6" x2="15" y2="21" />
@@ -30,15 +22,7 @@ export default function Navbar() {
     },
     {
       icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-bilan)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
-          <defs>
-            <linearGradient id="gold-grad-bilan" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FFD54F" />
-              <stop offset="30%" stopColor="#D4A843" />
-              <stop offset="70%" stopColor="#B8942D" />
-              <stop offset="100%" stopColor="#FFD54F" />
-            </linearGradient>
-          </defs>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-nav-bilan)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
           <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
           <polyline points="17 6 23 6 23 12" />
         </svg>
@@ -50,6 +34,24 @@ export default function Navbar() {
 
   return (
     <nav id="navbar" className="navbar">
+      {/* Global SVG Gradients Definition for the Navbar */}
+      <svg style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }} aria-hidden="true">
+        <defs>
+          <linearGradient id="gold-grad-nav-roadmap" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFD54F" />
+            <stop offset="30%" stopColor="#D4A843" />
+            <stop offset="70%" stopColor="#B8942D" />
+            <stop offset="100%" stopColor="#FFD54F" />
+          </linearGradient>
+          <linearGradient id="gold-grad-nav-bilan" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFD54F" />
+            <stop offset="30%" stopColor="#D4A843" />
+            <stop offset="70%" stopColor="#B8942D" />
+            <stop offset="100%" stopColor="#FFD54F" />
+          </linearGradient>
+        </defs>
+      </svg>
+
       <div className="nav-container">
         <a href="/" className="nav-brand-link">
           <div className="nav-brand">
@@ -81,7 +83,7 @@ export default function Navbar() {
             title="Roadmap Personnalisée"
           >
             <span className="nav-link-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-nav-roadmap)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
                 <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
                 <line x1="9" y1="3" x2="9" y2="18" />
                 <line x1="15" y1="6" x2="15" y2="21" />
@@ -98,7 +100,7 @@ export default function Navbar() {
             title="Bilan Hebdomadaire"
           >
             <span className="nav-link-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#gold-grad-nav-bilan)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.45))' }}>
                 <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
                 <polyline points="17 6 23 6 23 12" />
               </svg>
