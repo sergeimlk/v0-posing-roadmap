@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackgroundGrid from './BackgroundGrid';
 import gsap from 'gsap';
@@ -6,6 +7,7 @@ import useMagnetic from '../hooks/useMagnetic';
 import useTilt from '../hooks/useTilt';
 import BorderGlow from './reactbits/BorderGlow';
 import StarBorder from './reactbits/StarBorder';
+import Calendar from './reactbits/Calendar';
 
 const CATEGORIES = [
   { value: "Men's Physique", icon: '🏋️', label: "Men's Physique" },
@@ -141,6 +143,8 @@ export default function FormScreen({ onSubmit }) {
   const [shakeField, setShakeField] = useState(null);
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [showLegalModal, setShowLegalModal] = useState(null); // 'cgu' | 'rgpd' | null
+  const [showCalendarPopover, setShowCalendarPopover] = useState(false);
+  const calendarBtnRef = useRef(null);
 
   const submitBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15, maxTravelX: 6, maxTravelY: 10 });
   const cardRef = useTilt({ maxTilt: 2, scale: 1.002 });
@@ -563,21 +567,74 @@ export default function FormScreen({ onSubmit }) {
                   {formData.stageIntent === 'has_stage' && (
                     <motion.div
                       id="group-stageDate"
-                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                      animate={{ opacity: 1, height: 'auto', marginTop: '1rem', x: shakeField === 'stageDate' ? [-6, 6, -6, 6, 0] : 0 }}
-                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                      style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0, x: shakeField === 'stageDate' ? [-6, 6, -6, 6, 0] : 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', marginTop: '1rem' }}
                     >
-                      <label htmlFor="stageDate" style={{ fontSize: '0.85rem', color: '#ccc' }}>Date de la compétition <span className="required">*</span></label>
-                      <StarBorder color="rgba(212, 168, 67, 0.4)" speed="6s" className="star-border-wrap" style={{ width: '100%' }}>
-                        <input
-                          type="date"
-                          id="stageDate"
-                          name="stageDate"
-                          value={formData.stageDate}
-                          onChange={(e) => updateField('stageDate', e.target.value)}
-                        />
-                      </StarBorder>
+                      <label style={{ fontSize: '0.85rem', color: '#ccc' }}>Date de la compétition <span className="required">*</span></label>
+                      <button
+                        ref={calendarBtnRef}
+                        type="button"
+                        className="calendar-trigger-btn"
+                        onClick={() => setShowCalendarPopover(prev => !prev)}
+                        style={{
+                          color: formData.stageDate ? '#FFF' : '#666'
+                        }}
+                      >
+                        <span>
+                          {formData.stageDate 
+                            ? new Date(formData.stageDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                            : 'Sélectionner une date...'}
+                        </span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6, color: '#D4A843' }}>
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                          <line x1="16" y1="2" x2="16" y2="6" />
+                          <line x1="8" y1="2" x2="8" y2="6" />
+                          <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                      </button>
+                      {showCalendarPopover && createPortal(
+                        <div
+                          className="calendar-portal-backdrop"
+                          onClick={() => setShowCalendarPopover(false)}
+                          style={{
+                            position: 'fixed',
+                            inset: 0,
+                            zIndex: 9998,
+                            background: 'transparent'
+                          }}
+                        >
+                          <motion.div
+                            initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                              position: 'fixed',
+                              zIndex: 9999,
+                              top: calendarBtnRef.current ? calendarBtnRef.current.getBoundingClientRect().bottom + 8 : 0,
+                              left: calendarBtnRef.current ? calendarBtnRef.current.getBoundingClientRect().left : 0,
+                              width: calendarBtnRef.current ? calendarBtnRef.current.getBoundingClientRect().width : 290,
+                              display: 'flex',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <Calendar
+                              selected={formData.stageDate ? new Date(formData.stageDate) : null}
+                              onSelect={(date) => {
+                                const y = date.getFullYear();
+                                const m = String(date.getMonth() + 1).padStart(2, '0');
+                                const d = String(date.getDate()).padStart(2, '0');
+                                updateField('stageDate', `${y}-${m}-${d}`);
+                                setShowCalendarPopover(false);
+                              }}
+                            />
+                          </motion.div>
+                        </div>,
+                        document.body
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>
