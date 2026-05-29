@@ -36,6 +36,53 @@ const LEVELS = [
   { value: 4, label: '4 – Expert' },
 ];
 
+const MORPHOLOGIES = [
+  {
+    value: 'X',
+    label: 'X (Sablier)',
+    desc: 'Épaules et hanches alignées, taille fine',
+    svg: (
+      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
+        <path d="M10 12 L30 12 L12 48 L28 48 Z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="12" y1="30" x2="28" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
+      </svg>
+    )
+  },
+  {
+    value: 'H',
+    label: 'H (Rectangle)',
+    desc: 'Épaules, taille et hanches alignées',
+    svg: (
+      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
+        <rect x="11" y="12" width="18" height="36" rx="2" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="11" y1="30" x2="29" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
+      </svg>
+    )
+  },
+  {
+    value: 'V',
+    label: 'V (Triangle inv.)',
+    desc: 'Épaules larges, hanches et taille étroites',
+    svg: (
+      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
+        <polygon points="8,12 32,12 20,48" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="14" y1="30" x2="26" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
+      </svg>
+    )
+  },
+  {
+    value: 'O',
+    label: 'O (Ovale)',
+    desc: 'Silhouette ronde, taille peu définie',
+    svg: (
+      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
+        <ellipse cx="20" cy="30" rx="12" ry="18" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="8" y1="30" x2="32" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
+      </svg>
+    )
+  }
+];
+
 function isGibberishText(text) {
   if (!text || !text.trim()) return false;
   
@@ -82,7 +129,7 @@ function isGibberishText(text) {
 
 // ── Bilan-specific constants ──
 const WORK_CHIPS = [
-  { value: 'poses', label: 'Poses' },
+  { value: 'poses', label: 'Poses imposées' },
   { value: 'transitions', label: 'Transitions' },
   { value: 'vacuum', label: 'Vacuum' },
   { value: 'mobilite', label: 'Mobilité' },
@@ -151,6 +198,10 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
     routineProgress: 'na',
     nextWeekGoal: '',
     isAccompagnement: savedProfile?.isAccompagnement || false,
+    morphology: savedProfile?.morphology || '',
+    pointsFortsCustom: savedProfile?.pointsFortsCustom || '',
+    pointsFaiblesCustom: savedProfile?.pointsFaiblesCustom || '',
+    stageDate: savedProfile?.stageDate || '',
   });
 
   const [shakeField, setShakeField] = useState(null);
@@ -279,15 +330,20 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
     }
 
     if (formData.level === null) { triggerShake('level'); return; }
+    if (!formData.morphology) { triggerShake('morphology'); return; }
     if (!formData.weekNumber || formData.weekNumber < 1) { triggerShake('weekNumber'); return; }
     if (formData.workDone.length === 0 && !formData.workDoneDetails.trim()) { triggerShake('workDone'); return; }
+    if (!formData.pointsFortsCustom.trim()) { triggerShake('pointsFortsCustom'); return; }
+    if (!formData.pointsFaiblesCustom.trim()) { triggerShake('pointsFaiblesCustom'); return; }
     if (!formData.nextWeekGoal.trim()) { triggerShake('nextWeekGoal'); return; }
 
     // Validate text inputs for gibberish
     if (isGibberishText(formData.fullname)) { triggerShake('fullname'); return; }
     if (isGibberishText(formData.workDoneDetails)) { triggerShake('workDone'); return; }
-    if (isGibberishText(formData.difficultiesDetails)) { triggerShake('difficulties'); return; }
-    if (isGibberishText(formData.mobilityDetails)) { triggerShake('mobilityZones'); return; }
+    if (isGibberishText(formData.pointsFortsCustom)) { triggerShake('pointsFortsCustom'); return; }
+    if (isGibberishText(formData.pointsFaiblesCustom)) { triggerShake('pointsFaiblesCustom'); return; }
+    if (formData.difficultiesDetails && isGibberishText(formData.difficultiesDetails)) { triggerShake('difficulties'); return; }
+    if (formData.mobilityDetails && isGibberishText(formData.mobilityDetails)) { triggerShake('mobilityZones'); return; }
     if (isGibberishText(formData.nextWeekGoal)) { triggerShake('nextWeekGoal'); return; }
     if (formData.categories.includes('Autre') && isGibberishText(formData.categoryOther)) { triggerShake('categoryOther'); return; }
     if (isCompetitorVal && formData.federations.includes('Autre') && isGibberishText(formData.federationOther)) { triggerShake('federationOther'); return; }
@@ -302,6 +358,10 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
         federationOther: formData.federationOther.trim(),
         level: formData.level,
         isAccompagnement: formData.isAccompagnement,
+        morphology: formData.morphology,
+        pointsFortsCustom: formData.pointsFortsCustom.trim(),
+        pointsFaiblesCustom: formData.pointsFaiblesCustom.trim(),
+        stageDate: formData.stageDate,
       }));
     } catch { /* silent fail */ }
 
@@ -332,6 +392,10 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
       routineProgress: formData.routineProgress,
       nextWeekGoal: formData.nextWeekGoal.trim(),
       isAccompagnement: formData.isAccompagnement,
+      morphology: formData.morphology,
+      pointsFortsCustom: formData.pointsFortsCustom.trim(),
+      pointsFaiblesCustom: formData.pointsFaiblesCustom.trim(),
+      stageDate: formData.stageDate,
     };
 
     onSubmit(submissionData);
@@ -535,6 +599,35 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
             )}
           </AnimatePresence>
 
+          {/* Date de la compétition */}
+          <AnimatePresence mode="wait">
+            {isCompetitor && (
+              <motion.div
+                className="form-group"
+                id="group-stageDate"
+                key="stageDate-group"
+                initial={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                  marginBottom: '1.5rem',
+                  x: shakeField === 'stageDate' ? [-6, 6, -6, 6, 0] : 0
+                }}
+                transition={{ duration: 0.4 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
+              >
+                <label htmlFor="stageDate">Date de ta prochaine compétition (Optionnel, permet de calculer le décompte S-X)</label>
+                <input
+                  type="date"
+                  id="stageDate"
+                  name="stageDate"
+                  value={formData.stageDate}
+                  onChange={(e) => updateField('stageDate', e.target.value)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Niveau */}
           <motion.div
             className="form-group"
@@ -566,6 +659,38 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                   </button>
                 ))}
               </div>
+            </div>
+          </motion.div>
+
+          {/* Morphologie */}
+          <motion.div
+            className="form-group"
+            id="group-morphology"
+            animate={shakeField === 'morphology' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label id="bilan-label-morphology">Type de Morphologie <span className="required">*</span></label>
+            <div className="selector-grid selector-grid-2x2" role="group" aria-labelledby="bilan-label-morphology">
+              {MORPHOLOGIES.map(morph => {
+                const isSelected = formData.morphology === morph.value;
+                return (
+                  <button
+                    key={morph.value}
+                    type="button"
+                    className={`selector-btn selector-btn-morph${isSelected ? ' selected' : ''}`}
+                    onClick={(e) => {
+                      animateChipClick(e.currentTarget);
+                      updateField('morphology', morph.value);
+                    }}
+                    aria-pressed={isSelected}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '1rem 0.5rem', gap: '0.375rem', minHeight: '120px' }}
+                  >
+                    {morph.svg}
+                    <span style={{ fontWeight: '700', fontSize: '0.9rem' }}>{morph.label}</span>
+                    <span style={{ fontSize: '0.7rem', opacity: 0.7, textAlign: 'center', lineHeight: '1.2' }}>{morph.desc}</span>
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
 
@@ -735,6 +860,44 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Points forts custom */}
+          <motion.div
+            className="form-group"
+            id="group-pointsFortsCustom"
+            animate={shakeField === 'pointsFortsCustom' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label htmlFor="bilan-pointsFortsCustom">Décris tes points forts du moment (Physique / Posing) <span className="required">*</span></label>
+            <textarea
+              id="bilan-pointsFortsCustom"
+              name="pointsFortsCustom"
+              placeholder="Ex: Bonne largeur d'épaules, dos bien dessiné, bonne présence scénique..."
+              rows="2"
+              required
+              value={formData.pointsFortsCustom}
+              onChange={(e) => updateField('pointsFortsCustom', e.target.value)}
+            />
+          </motion.div>
+
+          {/* Points faibles custom */}
+          <motion.div
+            className="form-group"
+            id="group-pointsFaiblesCustom"
+            animate={shakeField === 'pointsFaiblesCustom' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label htmlFor="bilan-pointsFaiblesCustom">Décris tes points faibles du moment (Physique / Posing) <span className="required">*</span></label>
+            <textarea
+              id="bilan-pointsFaiblesCustom"
+              name="pointsFaiblesCustom"
+              placeholder="Ex: Difficulté à ouvrir le grand dorsal de dos, contrôle sangle abdominale..."
+              rows="2"
+              required
+              value={formData.pointsFaiblesCustom}
+              onChange={(e) => updateField('pointsFaiblesCustom', e.target.value)}
+            />
+          </motion.div>
 
           {/* ═══ SECTION 3: Avancement ═══ */}
           <div className="bilan-section-divider">

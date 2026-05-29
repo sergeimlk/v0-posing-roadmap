@@ -2271,7 +2271,7 @@ select:focus-visible {
   align-items: center;
   gap: 0.625rem;
   margin: 3.5rem 0 1.25rem;
-  padding-bottom: 0.75rem;
+  padding: 0 2rem 0.75rem; /* indente le texte et garde la ligne edge-to-edge */
   border-bottom: 1px solid rgba(212, 168, 67, 0.25);
 }
 
@@ -2289,7 +2289,7 @@ select:focus-visible {
 }
 
 .bilan-road-section {
-  padding: 1rem 0;
+  padding: 1rem 2rem; /* indente toutes les listes et textes de 2rem */
 }
 
 /* ── Bilan subsections ── */
@@ -2573,7 +2573,7 @@ select:focus-visible {
   background: rgba(212, 168, 67, 0.04) !important;
   border: 1px solid rgba(212, 168, 67, 0.12) !important;
   border-radius: 20px;
-  margin-top: 1.5rem;
+  margin: 1.5rem 2rem 0 !important; /* ajoute 2rem de marge latérale */
 }
 
 .bilan-road-cta-icon {
@@ -2704,4 +2704,55 @@ select:focus-visible {
 }
 .html2canvas-container .roadmap-logo-container {
   margin-bottom: 0.125rem !important;
+}
+
+/* ══════════════ MORPHOLOGY SELECTOR & SVGS ══════════════ */
+.selector-btn-morph {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.selector-btn-morph .morphology-svg {
+  color: rgba(255, 255, 255, 0.25);
+  margin-bottom: 0.5rem;
+  transition: color 0.3s, filter 0.3s, transform 0.3s;
+}
+
+.selector-btn-morph:hover .morphology-svg {
+  color: rgba(212, 168, 67, 0.7);
+  transform: scale(1.08) translateY(-2px);
+}
+
+.selector-btn-morph.selected .morphology-svg {
+  color: #D4A843;
+  filter: drop-shadow(0 0 8px rgba(212, 168, 67, 0.6));
+  transform: scale(1.08) translateY(-2px);
+}
+
+.selector-btn-morph.selected {
+  background: rgba(212, 168, 67, 0.05) !important;
+  border-color: rgba(212, 168, 67, 0.6) !important;
+  box-shadow: 0 0 15px rgba(212, 168, 67, 0.15) !important;
+}
+
+/* ══════════════ DATE PICKER STYLING ══════════════ */
+.form-group input[type="date"],
+.form-card input[type="date"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem !important;
+  color: #E5E5E5;
+  font-family: 'Inter', sans-serif;
+  background: rgba(18, 18, 18, 0.95);
+  border: 1px solid rgba(212, 168, 67, 0.15);
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.25s;
+  color-scheme: dark; /* Force l'icône de calendrier natif en blanc/sombre */
+}
+
+.form-group input[type="date"]:focus,
+.form-card input[type="date"]:focus {
+  border-color: rgba(212, 168, 67, 0.5);
+  box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.08);
+  background: #1a1a1a;
 }

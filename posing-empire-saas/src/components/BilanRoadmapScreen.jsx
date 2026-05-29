@@ -95,6 +95,36 @@ function VideoLink({ text, link }) {
   );
 }
 
+function getWeeksRemaining(stageDateStr) {
+  if (!stageDateStr) return null;
+  const stageDate = new Date(stageDateStr);
+  const today = new Date();
+  
+  stageDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  
+  const diffTime = stageDate.getTime() - today.getTime();
+  if (diffTime <= 0) return 0;
+  
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.ceil(diffDays / 7);
+}
+
+function formatStageCountdown(stageDateStr) {
+  if (!stageDateStr) return '';
+  const weeks = getWeeksRemaining(stageDateStr);
+  
+  const parts = stageDateStr.split('-');
+  let formattedDate = stageDateStr;
+  if (parts.length === 3) {
+    formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  
+  if (weeks === null) return formattedDate;
+  if (weeks <= 0) return `Jour J (${formattedDate})`;
+  return `S-${weeks} (${formattedDate})`;
+}
+
 export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
   const [downloading, setDownloading] = useState(false);
   
@@ -218,6 +248,18 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
               <span className="info-label">Semaine</span>
               <span className="info-value gold">S{String(meta.weekNumber).padStart(2, '0')}</span>
             </div>
+            {meta.morphology && (
+              <div className="info-item">
+                <span className="info-label">Morphologie</span>
+                <span className="info-value gold">Type {meta.morphology}</span>
+              </div>
+            )}
+            {meta.stageDate && (
+              <div className="info-item">
+                <span className="info-label">Échéance Scène</span>
+                <span className="info-value gold">{formatStageCountdown(meta.stageDate)}</span>
+              </div>
+            )}
           </div>
 
           {/* ═══ BILAN DE LA SEMAINE ═══ */}
@@ -470,7 +512,7 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
 
       {/* Beta Suggestions Footer */}
       <div className="beta-footer">
-        <span className="beta-badge">Version Beta 1.3</span>
+        <span className="beta-badge">Version Beta 1.4</span>
         <p className="beta-text">
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>

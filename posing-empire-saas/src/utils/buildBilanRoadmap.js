@@ -223,6 +223,7 @@ export function buildBilanRoadmap(data) {
     workDone, workDoneDetails, difficulties, difficultiesDetails,
     mobilityZones, mobilityDetails, presentationProgress,
     routineProgress, nextWeekGoal, isAccompagnement,
+    morphology, pointsFortsCustom, pointsFaiblesCustom, stageDate,
   } = data;
 
   const primaryCategory = data.primaryCategory || (data.categories && data.categories[0]) || category || 'Non compétiteur';
@@ -244,8 +245,16 @@ export function buildBilanRoadmap(data) {
   const pointsForts = [];
   const pointsAAmeliorer = [];
 
+  // Prepend customized feedback first
+  if (pointsFortsCustom && pointsFortsCustom.trim()) {
+    pointsForts.push(`Ressenti personnel : ${pointsFortsCustom.trim()}`);
+  }
+  if (pointsFaiblesCustom && pointsFaiblesCustom.trim()) {
+    pointsAAmeliorer.push(`Ressenti personnel : ${pointsFaiblesCustom.trim()}`);
+  }
+
   // Analyze work done
-  if (workDone.includes('poses')) pointsForts.push(`Tu as travaillé tes poses cette semaine — bon rythme !`);
+  if (workDone.includes('poses')) pointsForts.push(`Tu as travaillé tes poses imposées cette semaine — bon rythme !`);
   if (workDone.includes('transitions')) pointsForts.push(`Le travail sur les transitions montre que tu progresses dans la fluidité.`);
   if (workDone.includes('vacuum')) pointsForts.push(`La pratique régulière du vacuum va porter ses fruits sur le long terme.`);
   if (workDone.includes('mobilite')) pointsForts.push(`L'intégration de la mobilité dans ta routine est un excellent réflexe.`);
@@ -254,7 +263,7 @@ export function buildBilanRoadmap(data) {
   if (workDone.includes('quarts_de_tour')) pointsForts.push(`Les quarts de tour sont la base — bravo de les travailler régulièrement.`);
   if (workDone.includes('endurance')) pointsForts.push(`L'endurance de pose est souvent négligée — continue ce travail essentiel.`);
   if (workDone.includes('presentation')) pointsForts.push(`Le travail sur ta présentation individuelle avance, c'est positif.`);
-  if (workDone.length === 0) pointsForts.push(`N/A — aucun travail déclaré cette semaine. L'important est de reprendre dès maintenant.`);
+  if (workDone.length === 0 && (!pointsFortsCustom || !pointsFortsCustom.trim())) pointsForts.push(`N/A — aucun travail déclaré cette semaine. L'important est de reprendre dès maintenant.`);
 
   // Analyze difficulties
   if (difficulties.includes('poses')) pointsAAmeliorer.push(`Les poses imposées nécessitent encore du travail — c'est normal, la maîtrise vient avec la répétition.`);
@@ -267,12 +276,43 @@ export function buildBilanRoadmap(data) {
   if (difficulties.includes('endurance')) pointsAAmeliorer.push(`L'endurance de pose est insuffisante — intégrons des séries de maintien prolongé.`);
   if (difficulties.includes('stress')) pointsAAmeliorer.push(`La gestion du stress scénique est à travailler — des techniques de respiration vont aider.`);
   if (difficulties.includes('presentation')) pointsAAmeliorer.push(`La présentation individuelle nécessite plus de travail et de répétitions.`);
-  if (pointsAAmeliorer.length === 0) pointsAAmeliorer.push(`Aucune difficulté majeure signalée — continue sur cette lancée !`);
+  if (pointsAAmeliorer.length === 0 && (!pointsFaiblesCustom || !pointsFaiblesCustom.trim())) pointsAAmeliorer.push(`Aucune difficulté majeure signalée — continue sur cette lancée !`);
 
   // ═══════════════════════════════════
   // 2. PRIORITÉS — 3-5 axes d'action
   // ═══════════════════════════════════
   const priorites = [];
+
+  // Calculate weeks remaining until competition
+  let weeksRemaining = null;
+  if (stageDate) {
+    const sDate = new Date(stageDate);
+    const today = new Date();
+    sDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    const diffTime = sDate.getTime() - today.getTime();
+    if (diffTime > 0) {
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      weeksRemaining = Math.ceil(diffDays / 7);
+    } else {
+      weeksRemaining = 0;
+    }
+  }
+
+  // Inject dynamic countdown-based priority at the very top
+  if (weeksRemaining !== null) {
+    if (weeksRemaining === 0) {
+      priorites.push(`🚨 SEMAINE DE LA COMPÉTITION : Repos, réviser l'enchaînement mentalement, préparation logistique (tan, tenue) et focus mental.`);
+    } else if (weeksRemaining <= 2) {
+      priorites.push(`🚨 COMPÉTITION DANS ${weeksRemaining} S. (S-${weeksRemaining}) : Pratique complète en tenue, tenue de pose prolongée (30s+), simulation d'appels.`);
+    } else if (weeksRemaining <= 4) {
+      priorites.push(`⚠️ ÉCHÉANCE PROCHE (S-${weeksRemaining}) : Fixer définitivement les transitions et ta routine. Intensifier l'endurance de pose.`);
+    } else if (weeksRemaining <= 8) {
+      priorites.push(`⏳ Préparation Scène (S-${weeksRemaining}) : Pratique quotidienne régulière du posing (10-15 min) et enchaînements complets.`);
+    } else {
+      priorites.push(`📅 Objectif Compétition (S-${weeksRemaining}) : Structurer les fondations et installer une routine de posing régulière.`);
+    }
+  }
 
   // Priority based on week progression logic
   if (isCPorBB) {
@@ -683,6 +723,8 @@ export function buildBilanRoadmap(data) {
       level,
       weekNumber,
       isAccompagnement,
+      morphology,
+      stageDate,
     },
     bilan: {
       pointsForts,

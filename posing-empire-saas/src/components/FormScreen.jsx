@@ -64,6 +64,53 @@ const LEVELS = [
   { value: 4, label: '4 – Expert' },
 ];
 
+const MORPHOLOGIES = [
+  {
+    value: 'X',
+    label: 'X (Sablier)',
+    desc: 'Épaules et hanches alignées, taille fine',
+    svg: (
+      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
+        <path d="M10 12 L30 12 L12 48 L28 48 Z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="12" y1="30" x2="28" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
+      </svg>
+    )
+  },
+  {
+    value: 'H',
+    label: 'H (Rectangle)',
+    desc: 'Épaules, taille et hanches alignées',
+    svg: (
+      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
+        <rect x="11" y="12" width="18" height="36" rx="2" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="11" y1="30" x2="29" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
+      </svg>
+    )
+  },
+  {
+    value: 'V',
+    label: 'V (Triangle inv.)',
+    desc: 'Épaules larges, hanches et taille étroites',
+    svg: (
+      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
+        <polygon points="8,12 32,12 20,48" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="14" y1="30" x2="26" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
+      </svg>
+    )
+  },
+  {
+    value: 'O',
+    label: 'O (Ovale)',
+    desc: 'Silhouette ronde, taille peu définie',
+    svg: (
+      <svg viewBox="0 0 40 60" width="24" height="36" fill="none" stroke="currentColor" className="morphology-svg">
+        <ellipse cx="20" cy="30" rx="12" ry="18" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="8" y1="30" x2="32" y2="30" strokeWidth="1" strokeDasharray="2,2" strokeOpacity="0.5" />
+      </svg>
+    )
+  }
+];
+
 function isGibberishText(text) {
   if (!text || !text.trim()) return false;
   
@@ -109,20 +156,31 @@ function isGibberishText(text) {
 }
 
 export default function FormScreen({ onSubmit }) {
+  const savedProfile = (() => {
+    try {
+      const raw = localStorage.getItem('pe_athlete_profile');
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  })();
+
   const [formData, setFormData] = useState({
-    fullname: '',
-    categories: [],
-    categoryOther: '',
-    federations: [],
-    federationOther: '',
-    stageIntent: '', // 'has_stage' | 'undecided' | 'no_stage'
-    hasShorts: '', // 'yes' | 'no'
-    level: null,
-    objectives: '',
-    selectedProblems: [], // Array of physical difficulty keys
-    problems: '',
-    time: '',
-    needs: [],
+    fullname: savedProfile?.fullname || '',
+    categories: savedProfile?.categories || [],
+    categoryOther: savedProfile?.categoryOther || '',
+    federations: savedProfile?.federations || [],
+    federationOther: savedProfile?.federationOther || '',
+    stageIntent: savedProfile?.stageIntent || '', // 'has_stage' | 'undecided' | 'no_stage'
+    hasShorts: savedProfile?.hasShorts || '', // 'yes' | 'no'
+    level: savedProfile?.level ?? null,
+    objectives: savedProfile?.objectives || '',
+    selectedProblems: savedProfile?.selectedProblems || [], // Array of physical difficulty keys
+    problems: savedProfile?.problems || '',
+    time: savedProfile?.time || '',
+    needs: savedProfile?.needs || [],
+    morphology: savedProfile?.morphology || '',
+    pointsFortsCustom: savedProfile?.pointsFortsCustom || '',
+    pointsFaiblesCustom: savedProfile?.pointsFaiblesCustom || '',
+    stageDate: savedProfile?.stageDate || '',
   });
 
   const [shakeField, setShakeField] = useState(null);
@@ -294,15 +352,19 @@ export default function FormScreen({ onSubmit }) {
         if (formData.federations.includes('Autre') && !formData.federationOther.trim()) { triggerShake('federationOther'); return; }
         if (!formData.hasShorts) { triggerShake('hasShorts'); return; }
       }
+      if (formData.stageIntent === 'has_stage' && !formData.stageDate) { triggerShake('stageDate'); return; }
     }
 
     if (formData.level === null) { triggerShake('level'); return; }
+    if (!formData.morphology) { triggerShake('morphology'); return; }
     if (!formData.time) { triggerShake('time'); return; }
 
     // Validate text inputs for gibberish
     if (isGibberishText(formData.fullname)) { triggerShake('fullname'); return; }
     if (isGibberishText(formData.objectives)) { triggerShake('objectives'); return; }
     if (isGibberishText(formData.problems)) { triggerShake('problems'); return; }
+    if (formData.pointsFortsCustom && isGibberishText(formData.pointsFortsCustom)) { triggerShake('pointsFortsCustom'); return; }
+    if (formData.pointsFaiblesCustom && isGibberishText(formData.pointsFaiblesCustom)) { triggerShake('pointsFaiblesCustom'); return; }
     if (formData.categories.includes('Autre') && isGibberishText(formData.categoryOther)) { triggerShake('categoryOther'); return; }
     if (isCompetitor && formData.stageIntent !== 'no_stage' && formData.federations.includes('Autre') && isGibberishText(formData.federationOther)) { triggerShake('federationOther'); return; }
 
@@ -337,7 +399,28 @@ export default function FormScreen({ onSubmit }) {
       problems: formData.problems.trim(),
       time: formData.time,
       needs: formData.needs,
+      morphology: formData.morphology,
+      pointsFortsCustom: formData.pointsFortsCustom.trim(),
+      pointsFaiblesCustom: formData.pointsFaiblesCustom.trim(),
+      stageDate: formData.stageDate,
     };
+
+    // Save profile to localStorage for pre-populating Bilan and preserving data
+    try {
+      localStorage.setItem('pe_athlete_profile', JSON.stringify({
+        fullname: formData.fullname.trim(),
+        categories: formData.categories,
+        categoryOther: formData.categoryOther.trim(),
+        federations: resolvedFederations,
+        federationOther: formData.federationOther.trim(),
+        level: formData.level,
+        morphology: formData.morphology,
+        pointsFortsCustom: formData.pointsFortsCustom.trim(),
+        pointsFaiblesCustom: formData.pointsFaiblesCustom.trim(),
+        stageDate: formData.stageDate,
+        stageIntent: formData.stageIntent,
+      }));
+    } catch { /* silent fail */ }
 
     onSubmit(submissionData);
   };
@@ -499,6 +582,27 @@ export default function FormScreen({ onSubmit }) {
                     </motion.button>
                   ))}
                 </div>
+
+                <AnimatePresence>
+                  {formData.stageIntent === 'has_stage' && (
+                    <motion.div
+                      id="group-stageDate"
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginTop: '1rem', x: shakeField === 'stageDate' ? [-6, 6, -6, 6, 0] : 0 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}
+                    >
+                      <label htmlFor="stageDate" style={{ fontSize: '0.85rem', color: '#ccc' }}>Date de la compétition <span className="required">*</span></label>
+                      <input
+                        type="date"
+                        id="stageDate"
+                        name="stageDate"
+                        value={formData.stageDate}
+                        onChange={(e) => updateField('stageDate', e.target.value)}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
           </AnimatePresence>
@@ -641,6 +745,38 @@ export default function FormScreen({ onSubmit }) {
             </div>
           </motion.div>
 
+          {/* Morphologie */}
+          <motion.div
+            className="form-group"
+            id="group-morphology"
+            animate={shakeField === 'morphology' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label id="label-morphology">Type de Morphologie <span className="required">*</span></label>
+            <div className="selector-grid selector-grid-2x2" role="group" aria-labelledby="label-morphology">
+              {MORPHOLOGIES.map(morph => {
+                const isSelected = formData.morphology === morph.value;
+                return (
+                  <button
+                    key={morph.value}
+                    type="button"
+                    className={`selector-btn selector-btn-morph${isSelected ? ' selected' : ''}`}
+                    onClick={(e) => {
+                      animateChipClick(e.currentTarget);
+                      updateField('morphology', morph.value);
+                    }}
+                    aria-pressed={isSelected}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '1rem 0.5rem', gap: '0.375rem', minHeight: '120px' }}
+                  >
+                    {morph.svg}
+                    <span style={{ fontWeight: '700', fontSize: '0.9rem' }}>{morph.label}</span>
+                    <span style={{ fontSize: '0.7rem', opacity: 0.7, textAlign: 'center', lineHeight: '1.2' }}>{morph.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+
           {/* Objectifs */}
           <motion.div
             className="form-group"
@@ -730,6 +866,42 @@ export default function FormScreen({ onSubmit }) {
                 </motion.span>
               )}
             </AnimatePresence>
+          </motion.div>
+
+          {/* Points forts custom */}
+          <motion.div
+            className="form-group"
+            id="group-pointsFortsCustom"
+            animate={shakeField === 'pointsFortsCustom' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label htmlFor="pointsFortsCustom">Décris tes points forts physiques / posing (Optionnel)</label>
+            <textarea
+              id="pointsFortsCustom"
+              name="pointsFortsCustom"
+              placeholder="Ex: Bonne largeur de clavicules, sangle abdominale contrôlée, dos fort..."
+              rows="2"
+              value={formData.pointsFortsCustom}
+              onChange={(e) => updateField('pointsFortsCustom', e.target.value)}
+            />
+          </motion.div>
+
+          {/* Points faibles custom */}
+          <motion.div
+            className="form-group"
+            id="group-pointsFaiblesCustom"
+            animate={shakeField === 'pointsFaiblesCustom' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label htmlFor="pointsFaiblesCustom">Décris tes points faibles physiques / posing (Optionnel)</label>
+            <textarea
+              id="pointsFaiblesCustom"
+              name="pointsFaiblesCustom"
+              placeholder="Ex: Manque de volume sur les ischios, rigidité thoracique..."
+              rows="2"
+              value={formData.pointsFaiblesCustom}
+              onChange={(e) => updateField('pointsFaiblesCustom', e.target.value)}
+            />
           </motion.div>
 
           {/* Temps pratique quotidien */}
@@ -855,7 +1027,7 @@ export default function FormScreen({ onSubmit }) {
 
       {/* Beta Suggestions Footer */}
       <div className="beta-footer">
-        <span className="beta-badge">Version Beta 1.3</span>
+        <span className="beta-badge">Version Beta 1.4</span>
         <p className="beta-text">
           Posing Empire est en amélioration continue. Une suggestion ou un retour d'expérience ?
         </p>

@@ -77,6 +77,36 @@ function LinkArrowIcon() {
   );
 }
 
+function getWeeksRemaining(stageDateStr) {
+  if (!stageDateStr) return null;
+  const stageDate = new Date(stageDateStr);
+  const today = new Date();
+  
+  stageDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  
+  const diffTime = stageDate.getTime() - today.getTime();
+  if (diffTime <= 0) return 0;
+  
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.ceil(diffDays / 7);
+}
+
+function formatStageCountdown(stageDateStr) {
+  if (!stageDateStr) return '';
+  const weeks = getWeeksRemaining(stageDateStr);
+  
+  const parts = stageDateStr.split('-');
+  let formattedDate = stageDateStr;
+  if (parts.length === 3) {
+    formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  
+  if (weeks === null) return formattedDate;
+  if (weeks <= 0) return `Jour J (${formattedDate})`;
+  return `S-${weeks} (${formattedDate})`;
+}
+
 export default function RoadmapScreen({ data, onRestart }) {
   const [downloading, setDownloading] = useState(false);
   const [openIndices, setOpenIndices] = useState([0]);
@@ -252,6 +282,18 @@ export default function RoadmapScreen({ data, onRestart }) {
               <span className="info-label">Temps quotidien</span>
               <span className="info-value">{data.time}</span>
             </div>
+            {data.morphology && (
+              <div className="info-item">
+                <span className="info-label">Morphologie</span>
+                <span className="info-value gold">Type {data.morphology}</span>
+              </div>
+            )}
+            {data.stageDate && (
+              <div className="info-item">
+                <span className="info-label">Échéance Scène</span>
+                <span className="info-value gold">{formatStageCountdown(data.stageDate)}</span>
+              </div>
+            )}
             <div className="info-item" style={{ gridColumn: '1 / -1' }}>
               <span className="info-label">Objectifs</span>
               <span className="info-value">{data.objectives}</span>
