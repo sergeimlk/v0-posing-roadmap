@@ -30,13 +30,55 @@ const FEDERATIONS = [
 ];
 
 const LEVELS = [
-  { value: 0, label: 'Débutant' },
-  { value: 1, label: 'Novice' },
-  { value: 2, label: 'Intermédiaire' },
-  { value: 3, label: 'Confirmé' },
-  { value: 4, label: 'Avancé' },
-  { value: 5, label: 'Expert' },
+  { value: 1, label: '1 – Débutant' },
+  { value: 2, label: '2 – Intermédiaire' },
+  { value: 3, label: '3 – Avancé' },
+  { value: 4, label: '4 – Expert' },
 ];
+
+function isGibberishText(text) {
+  if (!text || !text.trim()) return false;
+  
+  const val = text.trim();
+  const words = val.split(/[^a-zA-Zà-üÀ-Ü\d']+/).filter(w => w.length > 0);
+  if (words.length === 0) return false;
+  
+  const whitelist2 = ['mr', 'dr', 'vs', 'st', 'ms', 'pr', 'kd', 'dj', 'mp', 'cp', 'bb'];
+  
+  for (const word of words) {
+    const len = word.length;
+    const lower = word.toLowerCase();
+    const vowelMatch = word.match(/[aeiouyâäéèêëîïôöûüœæ]/gi);
+    const vowelCount = vowelMatch ? vowelMatch.length : 0;
+    
+    // 1. 2-letter word without vowels (unless whitelisted)
+    if (len === 2 && vowelCount === 0 && !whitelist2.includes(lower)) {
+      return true;
+    }
+    
+    // 2. 3+ letter word without vowels
+    if (len >= 3 && vowelCount === 0) {
+      return true;
+    }
+    
+    // 3. 6+ letter word with only 1 vowel, unless it matches sport/strict/struct
+    if (len >= 6 && vowelCount <= 1 && !/sport|strict|struct/i.test(lower)) {
+      return true;
+    }
+    
+    // 4. 5+ consecutive consonants
+    if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(lower)) {
+      return true;
+    }
+    
+    // 5. Triple repeating characters
+    if (/(.)\1\1/.test(lower)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
 
 // ── Bilan-specific constants ──
 const WORK_CHIPS = [
@@ -93,9 +135,9 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
 
   const [formData, setFormData] = useState({
     fullname: savedProfile?.fullname || '',
-    category: savedProfile?.category || '',
+    categories: savedProfile?.categories || (savedProfile?.category ? [savedProfile.category] : []),
     categoryOther: savedProfile?.categoryOther || '',
-    federation: savedProfile?.federation || '',
+    federations: savedProfile?.federations || (savedProfile?.federation ? [savedProfile.federation] : []),
     federationOther: savedProfile?.federationOther || '',
     level: savedProfile?.level ?? null,
     weekNumber: '',
@@ -154,6 +196,58 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
     );
   }, []);
 
+  const handleCategoryToggle = useCallback((val, e) => {
+    if (e && e.currentTarget) animateChipClick(e.currentTarget);
+    setFormData(prev => {
+      let nextCategories = prev.categories || [];
+      if (val === 'Non compétiteur') {
+        nextCategories = ['Non compétiteur'];
+      } else {
+        nextCategories = nextCategories.filter(c => c !== 'Non compétiteur');
+        if (nextCategories.includes(val)) {
+          nextCategories = nextCategories.filter(c => c !== val);
+        } else {
+          if (nextCategories.length < 3) {
+            nextCategories = [...nextCategories, val];
+          } else {
+            return prev;
+          }
+        }
+      }
+
+      const next = { ...prev, categories: nextCategories };
+      if (!nextCategories.includes('Autre')) {
+        next.categoryOther = '';
+      }
+
+      if (nextCategories.includes('Non compétiteur') || nextCategories.length === 0) {
+        next.federations = ['Aucune'];
+      } else {
+        if (prev.categories && prev.categories.includes('Non compétiteur')) {
+          next.federations = [];
+        }
+      }
+      return next;
+    });
+  }, [animateChipClick]);
+
+  const handleFederationToggle = useCallback((val, e) => {
+    if (e && e.currentTarget) animateChipClick(e.currentTarget);
+    setFormData(prev => {
+      let nextFeds = prev.federations || [];
+      if (nextFeds.includes(val)) {
+        nextFeds = nextFeds.filter(f => f !== val);
+      } else {
+        nextFeds = [...nextFeds, val];
+      }
+      const next = { ...prev, federations: nextFeds };
+      if (!nextFeds.includes('Autre')) {
+        next.federationOther = '';
+      }
+      return next;
+    });
+  }, [animateChipClick]);
+
   const toggleChip = useCallback((field, value, e) => {
     if (e && e.currentTarget) animateChipClick(e.currentTarget);
     setFormData(prev => ({
@@ -175,13 +269,13 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
     e.preventDefault();
 
     if (!formData.fullname.trim()) { triggerShake('fullname'); return; }
-    if (!formData.category) { triggerShake('category'); return; }
-    if (formData.category === 'Autre' && !formData.categoryOther.trim()) { triggerShake('categoryOther'); return; }
+    if (!formData.categories || formData.categories.length === 0) { triggerShake('category'); return; }
+    if (formData.categories.includes('Autre') && !formData.categoryOther.trim()) { triggerShake('categoryOther'); return; }
 
-    const isCompetitor = formData.category !== 'Non compétiteur';
-    if (isCompetitor) {
-      if (!formData.federation) { triggerShake('federation'); return; }
-      if (formData.federation === 'Autre' && !formData.federationOther.trim()) { triggerShake('federationOther'); return; }
+    const isCompetitorVal = formData.categories && formData.categories.length > 0 && !formData.categories.includes('Non compétiteur');
+    if (isCompetitorVal) {
+      if (!formData.federations || formData.federations.length === 0) { triggerShake('federation'); return; }
+      if (formData.federations.includes('Autre') && !formData.federationOther.trim()) { triggerShake('federationOther'); return; }
     }
 
     if (formData.level === null) { triggerShake('level'); return; }
@@ -189,23 +283,43 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
     if (formData.workDone.length === 0 && !formData.workDoneDetails.trim()) { triggerShake('workDone'); return; }
     if (!formData.nextWeekGoal.trim()) { triggerShake('nextWeekGoal'); return; }
 
+    // Validate text inputs for gibberish
+    if (isGibberishText(formData.fullname)) { triggerShake('fullname'); return; }
+    if (isGibberishText(formData.workDoneDetails)) { triggerShake('workDone'); return; }
+    if (isGibberishText(formData.difficultiesDetails)) { triggerShake('difficulties'); return; }
+    if (isGibberishText(formData.mobilityDetails)) { triggerShake('mobilityZones'); return; }
+    if (isGibberishText(formData.nextWeekGoal)) { triggerShake('nextWeekGoal'); return; }
+    if (formData.categories.includes('Autre') && isGibberishText(formData.categoryOther)) { triggerShake('categoryOther'); return; }
+    if (isCompetitorVal && formData.federations.includes('Autre') && isGibberishText(formData.federationOther)) { triggerShake('federationOther'); return; }
+
     // Save profile for next time
     try {
       localStorage.setItem('pe_athlete_profile', JSON.stringify({
         fullname: formData.fullname.trim(),
-        category: formData.category,
+        categories: formData.categories,
         categoryOther: formData.categoryOther.trim(),
-        federation: formData.federation,
+        federations: formData.federations,
         federationOther: formData.federationOther.trim(),
         level: formData.level,
         isAccompagnement: formData.isAccompagnement,
       }));
     } catch { /* silent fail */ }
 
+    const resolvedCategories = formData.categories.map(c => 
+      c === 'Autre' ? (formData.categoryOther.trim() || 'Autre') : c
+    );
+    const resolvedFederations = !isCompetitorVal ? ['Aucune'] : formData.federations.map(f =>
+      f === 'Autre' ? (formData.federationOther.trim() || 'Autre') : f
+    );
+
     const submissionData = {
       fullname: formData.fullname.trim(),
-      category: formData.category === 'Autre' ? (formData.categoryOther.trim() || 'Autre') : formData.category,
-      federation: !isCompetitor ? 'Aucune' : (formData.federation === 'Autre' ? (formData.federationOther.trim() || 'Autre') : formData.federation),
+      categories: resolvedCategories,
+      category: resolvedCategories.join(' · '),
+      primaryCategory: resolvedCategories[0] || 'Non compétiteur',
+      federations: resolvedFederations,
+      federation: resolvedFederations.join(' · '),
+      primaryFederation: resolvedFederations[0] || 'Aucune',
       level: formData.level,
       weekNumber: parseInt(formData.weekNumber, 10),
       workDone: formData.workDone,
@@ -223,7 +337,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
     onSubmit(submissionData);
   };
 
-  const isCompetitor = formData.category && formData.category !== 'Non compétiteur';
+  const isCompetitor = formData.categories && formData.categories.length > 0 && !formData.categories.includes('Non compétiteur');
 
   return (
     <main className="screen active">
@@ -278,43 +392,50 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
               value={formData.fullname}
               onChange={(e) => updateField('fullname', e.target.value)}
             />
+            <AnimatePresence>
+              {isGibberishText(formData.fullname) && (
+                <motion.span
+                  className="error-text"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                >
+                  Veuillez écrire un nom correct (pas de texte aléatoire).
+                </motion.span>
+              )}
+            </AnimatePresence>
           </motion.div>
 
-          {/* Catégorie */}
+          {/* Catégories */}
           <motion.div
             className="form-group"
             id="group-category"
             animate={shakeField === 'category' ? { x: [-6, 6, -6, 6, 0] } : {}}
             transition={{ duration: 0.4 }}
           >
-            <label id="bilan-label-category">Catégorie <span className="required">*</span></label>
+            <label id="bilan-label-category">Catégories (Sélectionne jusqu'à 3) <span className="required">*</span></label>
             <div className="selector-grid selector-grid-2x2" role="group" aria-labelledby="bilan-label-category">
-              {CATEGORIES.map(cat => (
-                <motion.button
-                  key={cat.value}
-                  type="button"
-                  className={`selector-btn${formData.category === cat.value ? ' selected' : ''}`}
-                  onClick={(e) => {
-                    animateChipClick(e.currentTarget);
-                    updateField('category', cat.value);
-                    if (cat.value !== 'Autre') updateField('categoryOther', '');
-                    if (cat.value === 'Non compétiteur') {
-                      updateField('federation', 'Aucune');
-                    } else if (formData.category === 'Non compétiteur') {
-                      updateField('federation', '');
-                    }
-                  }}
-                  aria-pressed={formData.category === cat.value}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="selector-icon" aria-hidden="true">{cat.icon}</span>
-                  <span>{cat.label}</span>
-                </motion.button>
-              ))}
+              {CATEGORIES.map(cat => {
+                const isSelected = formData.categories.includes(cat.value);
+                return (
+                  <motion.button
+                    key={cat.value}
+                    type="button"
+                    className={`selector-btn${isSelected ? ' selected' : ''}`}
+                    onClick={(e) => handleCategoryToggle(cat.value, e)}
+                    aria-pressed={isSelected}
+                    whileHover={{ scale: 1.005 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span className="selector-icon" aria-hidden="true">{cat.icon}</span>
+                    <span>{cat.label}</span>
+                  </motion.button>
+                );
+              })}
             </div>
             <AnimatePresence>
-              {formData.category === 'Autre' && (
+              {formData.categories.includes('Autre') && (
                 <motion.div
                   id="group-categoryOther"
                   initial={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
@@ -329,12 +450,25 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                     value={formData.categoryOther}
                     onChange={(e) => updateField('categoryOther', e.target.value)}
                   />
+                  <AnimatePresence>
+                    {isGibberishText(formData.categoryOther) && (
+                      <motion.span
+                        className="error-text"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                      >
+                        Veuillez écrire une catégorie correcte.
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
 
-          {/* Fédération (competitors only) */}
+          {/* Fédérations (competitors only) */}
           <AnimatePresence mode="wait">
             {isCompetitor && (
               <motion.div
@@ -346,28 +480,27 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                 transition={{ duration: 0.4 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
               >
-                <label id="bilan-label-federation">Fédération <span className="required">*</span></label>
+                <label id="bilan-label-federation">Fédérations (Multi-sélection) <span className="required">*</span></label>
                 <div className="selector-grid selector-grid-fed" role="group" aria-labelledby="bilan-label-federation">
-                  {FEDERATIONS.map(fed => (
-                    <motion.button
-                      key={fed.value}
-                      type="button"
-                      className={`selector-btn selector-btn-sm${formData.federation === fed.value ? ' selected' : ''}`}
-                      onClick={(e) => {
-                        animateChipClick(e.currentTarget);
-                        updateField('federation', fed.value);
-                        if (fed.value !== 'Autre') updateField('federationOther', '');
-                      }}
-                      aria-pressed={formData.federation === fed.value}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {fed.label}
-                    </motion.button>
-                  ))}
+                  {FEDERATIONS.map(fed => {
+                    const isSelected = formData.federations.includes(fed.value);
+                    return (
+                      <motion.button
+                        key={fed.value}
+                        type="button"
+                        className={`selector-btn selector-btn-sm${isSelected ? ' selected' : ''}`}
+                        onClick={(e) => handleFederationToggle(fed.value, e)}
+                        aria-pressed={isSelected}
+                        whileHover={{ scale: 1.005 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {fed.label}
+                      </motion.button>
+                    );
+                  })}
                 </div>
                 <AnimatePresence>
-                  {formData.federation === 'Autre' && (
+                  {formData.federations.includes('Autre') && (
                     <motion.div
                       id="group-federationOther"
                       initial={{ opacity: 0, height: 0, marginTop: 0, overflow: 'hidden' }}
@@ -382,6 +515,19 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
                         value={formData.federationOther}
                         onChange={(e) => updateField('federationOther', e.target.value)}
                       />
+                      <AnimatePresence>
+                        {isGibberishText(formData.federationOther) && (
+                          <motion.span
+                            className="error-text"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                          >
+                            Veuillez écrire une fédération correcte.
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -401,7 +547,7 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
               <div className="level-track">
                 <motion.div
                   className="level-fill"
-                  animate={{ width: formData.level !== null ? `${(formData.level / 5) * 100}%` : '0%' }}
+                  animate={{ width: formData.level !== null ? `${((formData.level - 1) / 3) * 100}%` : '0%' }}
                   transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                 />
               </div>
@@ -499,6 +645,19 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
               onChange={(e) => updateField('workDoneDetails', e.target.value)}
               aria-label="Précisions sur le travail effectué"
             />
+            <AnimatePresence>
+              {isGibberishText(formData.workDoneDetails) && (
+                <motion.span
+                  className="error-text"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                >
+                  Veuillez écrire une phrase correcte.
+                </motion.span>
+              )}
+            </AnimatePresence>
           </motion.div>
 
           {/* Difficultés rencontrées */}
@@ -524,6 +683,19 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
               onChange={(e) => updateField('difficultiesDetails', e.target.value)}
               aria-label="Précisions sur les difficultés"
             />
+            <AnimatePresence>
+              {isGibberishText(formData.difficultiesDetails) && (
+                <motion.span
+                  className="error-text"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                >
+                  Veuillez écrire une phrase correcte.
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Zones de mobilité limitées */}
@@ -549,6 +721,19 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
               onChange={(e) => updateField('mobilityDetails', e.target.value)}
               aria-label="Précisions sur la mobilité"
             />
+            <AnimatePresence>
+              {isGibberishText(formData.mobilityDetails) && (
+                <motion.span
+                  className="error-text"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                >
+                  Veuillez écrire une phrase correcte.
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* ═══ SECTION 3: Avancement ═══ */}
@@ -620,6 +805,19 @@ export default function BilanFormScreen({ onSubmit, onBack }) {
               value={formData.nextWeekGoal}
               onChange={(e) => updateField('nextWeekGoal', e.target.value)}
             />
+            <AnimatePresence>
+              {isGibberishText(formData.nextWeekGoal) && (
+                <motion.span
+                  className="error-text"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                >
+                  Veuillez écrire une phrase correcte (pas de texte aléatoire).
+                </motion.span>
+              )}
+            </AnimatePresence>
           </motion.div>
 
           {/* Submit */}

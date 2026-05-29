@@ -6,14 +6,14 @@ import LoadingScreen from './components/LoadingScreen';
 import RoadmapScreen from './components/RoadmapScreen';
 import BilanFormScreen from './components/BilanFormScreen';
 import BilanRoadmapScreen from './components/BilanRoadmapScreen';
-import SandboxScreen from './components/SandboxScreen';
+// import SandboxScreen from './components/SandboxScreen';
 
 function getInitialMode() {
   try {
     const params = new URLSearchParams(window.location.search);
     const mode = params.get('mode');
     if (mode === 'bilan') return 'bilan-form';
-    if (mode === 'sandbox') return 'sandbox';
+    // if (mode === 'sandbox') return 'sandbox';
   } catch { /* no-op */ }
   return 'form';
 }
@@ -157,7 +157,8 @@ export default function App() {
           </motion.div>
         )}
 
-        {currentScreen === 'sandbox' && (
+        {/* 
+        currentScreen === 'sandbox' && (
           <motion.div
             key="sandbox"
             initial={{ opacity: 0 }}
@@ -172,7 +173,8 @@ export default function App() {
               }}
             />
           </motion.div>
-        )}
+        )
+        */}
       </AnimatePresence>
     </>
   );

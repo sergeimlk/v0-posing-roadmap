@@ -58,7 +58,7 @@ export default function Navbar() {
             <span className="nav-link-text">Bilan Hebdomadaire</span>
           </a>
 
-          {/* Labo d'Effets (Sandbox) */}
+          {/* Labo d'Effets (Sandbox) - Commenté
           <a
             ref={link3Ref}
             href="/?mode=sandbox"
@@ -76,6 +76,7 @@ export default function Navbar() {
             </span>
             <span className="nav-link-text">Labo d'Effets</span>
           </a>
+          */}
 
           {/* Rejoindre Skool */}
           <a

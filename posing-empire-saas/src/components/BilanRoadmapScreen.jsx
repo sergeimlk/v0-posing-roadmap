@@ -6,7 +6,12 @@ import { generatePDF } from '../utils/generatePDF';
 import gsap from 'gsap';
 import useMagnetic from '../hooks/useMagnetic';
 
-const LEVEL_LABELS = ['Débutant', 'Novice', 'Intermédiaire', 'Confirmé', 'Avancé', 'Expert'];
+const LEVEL_LABELS = {
+  1: '1 – Débutant',
+  2: '2 – Intermédiaire',
+  3: '3 – Avancé',
+  4: '4 – Expert'
+};
 
 function SectionHeader({ icon, title }) {
   return (
@@ -20,6 +25,61 @@ function SectionHeader({ icon, title }) {
   );
 }
 
+function LinkArrowIcon() {
+  return (
+    <span className="link-arrow" style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+      {/* ================= OPTION A (Chain Link) ================= */}
+      <svg 
+        viewBox="0 0 24 24" 
+        width="14" 
+        height="14" 
+        fill="none" 
+        stroke="url(#goldGradientIcon)" 
+        strokeWidth="2.5" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+        style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px', transition: 'transform 0.2s ease' }}
+      >
+        <defs>
+          <linearGradient id="goldGradientIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFD54F" />
+            <stop offset="50%" stopColor="#D4A843" />
+            <stop offset="100%" stopColor="#B8942D" />
+          </linearGradient>
+        </defs>
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+      </svg>
+
+      {/* ================= OPTION B (External Link Box-Arrow) - Commenté pour switch ================= */}
+      {/* 
+      <svg 
+        viewBox="0 0 24 24" 
+        width="14" 
+        height="14" 
+        fill="none" 
+        stroke="url(#goldGradientIcon)" 
+        strokeWidth="2.5" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+        style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px', transition: 'transform 0.2s ease' }}
+      >
+        <defs>
+          <linearGradient id="goldGradientIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFD54F" />
+            <stop offset="50%" stopColor="#D4A843" />
+            <stop offset="100%" stopColor="#B8942D" />
+          </linearGradient>
+        </defs>
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+        <polyline points="15 3 21 3 21 9" />
+        <line x1="10" y1="14" x2="21" y2="3" />
+      </svg>
+      */}
+    </span>
+  );
+}
+
 function VideoLink({ text, link }) {
   if (!link) return <span className="bilan-road-task-text">{text}</span>;
   return (
@@ -30,7 +90,7 @@ function VideoLink({ text, link }) {
       className="bilan-road-video-link"
     >
       <span>{text}</span>
-      <span className="link-arrow" aria-hidden="true">↗</span>
+      <LinkArrowIcon />
     </a>
   );
 }
@@ -38,8 +98,8 @@ function VideoLink({ text, link }) {
 export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
   const [downloading, setDownloading] = useState(false);
   
-  const downloadBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
-  const restartBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
+  const downloadBtnRef = useMagnetic({ strength: 0.1, textStrength: 0.05, maxTravelX: 6, maxTravelY: 6 });
+  const restartBtnRef = useMagnetic({ strength: 0.1, textStrength: 0.05, maxTravelX: 6, maxTravelY: 6 });
 
   useEffect(() => {
     gsap.fromTo('.roadmap-header > *', 
@@ -143,16 +203,16 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
               <span className="info-value">{dateStr}</span>
             </div>
             <div className="info-item">
-              <span className="info-label">Catégorie</span>
-              <span className="info-value">{meta.category}</span>
+              <span className="info-label">Catégories</span>
+              <span className="info-value">{meta.categories && meta.categories.length > 0 ? meta.categories.join(' · ') : meta.category}</span>
             </div>
             <div className="info-item">
-              <span className="info-label">Fédération</span>
-              <span className="info-value">{meta.federation}</span>
+              <span className="info-label">Fédérations</span>
+              <span className="info-value">{meta.federations && meta.federations.length > 0 ? meta.federations.join(' · ') : meta.federation}</span>
             </div>
             <div className="info-item">
               <span className="info-label">Niveau</span>
-              <span className="info-value gold">{meta.level}/5 — {LEVEL_LABELS[meta.level]}</span>
+              <span className="info-value gold">{meta.level}/4 — {LEVEL_LABELS[meta.level]}</span>
             </div>
             <div className="info-item">
               <span className="info-label">Semaine</span>
@@ -161,206 +221,217 @@ export default function BilanRoadmapScreen({ data, onRestart, onBack }) {
           </div>
 
           {/* ═══ BILAN DE LA SEMAINE ═══ */}
-          <SectionHeader icon="📋" title="Bilan de la semaine" />
-          <div
-            className="bilan-road-section"
-            style={{ opacity: 0 }}
-          >
-            <div className="bilan-road-subsection">
-              <div className="bilan-road-sub-label success">✅ Points forts</div>
-              <ul className="bilan-road-list">
-                {bilan.pointsForts.map((pt, i) => <li key={i}>{pt}</li>)}
-              </ul>
-            </div>
-            <div className="bilan-road-subsection">
-              <div className="bilan-road-sub-label warning">⚠️ Points à améliorer</div>
-              <ul className="bilan-road-list">
-                {bilan.pointsAAmeliorer.map((pt, i) => <li key={i}>{pt}</li>)}
-              </ul>
+          <div className="pdf-block">
+            <SectionHeader icon="📋" title="Bilan de la semaine" />
+            <div
+              className="bilan-road-section"
+              style={{ opacity: 0 }}
+            >
+              <div className="bilan-road-subsection">
+                <div className="bilan-road-sub-label success">✅ Points forts</div>
+                <ul className="bilan-road-list">
+                  {bilan.pointsForts.map((pt, i) => <li key={i}>{pt}</li>)}
+                </ul>
+              </div>
+              <div className="bilan-road-subsection">
+                <div className="bilan-road-sub-label warning">⚠️ Points à améliorer</div>
+                <ul className="bilan-road-list">
+                  {bilan.pointsAAmeliorer.map((pt, i) => <li key={i}>{pt}</li>)}
+                </ul>
+              </div>
             </div>
           </div>
 
           {/* ═══ PRIORITÉS DE LA SEMAINE ═══ */}
-          <SectionHeader icon="🎯" title="Priorités de la semaine" />
-          <div
-            className="bilan-road-section"
-            style={{ opacity: 0 }}
-          >
-            <ol className="bilan-road-priorities">
-              {priorites.map((p, i) => <li key={i}>{p}</li>)}
-            </ol>
+          <div className="pdf-block">
+            <SectionHeader icon="🎯" title="Priorités de la semaine" />
+            <div
+              className="bilan-road-section"
+              style={{ opacity: 0 }}
+            >
+              <ol className="bilan-road-priorities">
+                {priorites.map((p, i) => <li key={i}>{p}</li>)}
+              </ol>
+            </div>
           </div>
 
           {/* ═══ PLAN D'ACTION ═══ */}
-          <SectionHeader icon="📅" title="Plan d'action" />
-
-          {/* Mobilité */}
-          {hasMobilite && (
-            <div
-              className="bilan-road-section bilan-road-action-block"
-              style={{ opacity: 0 }}
-            >
-              <div className="bilan-road-action-title">🧘 Mobilité</div>
-              {planAction.mobilite.map((ex, i) => (
-                <div key={i} className="bilan-road-exercise">
-                  <div className="bilan-road-exercise-name">{ex.exercice}</div>
-                  <div className="bilan-road-exercise-obj">{ex.objectif}</div>
-                  <VideoLink text="Voir la vidéo" link={ex.link} />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Activation musculaire */}
-          {hasActivation && (
-            <div
-              className="bilan-road-section bilan-road-action-block"
-              style={{ opacity: 0 }}
-            >
-              <div className="bilan-road-action-title">💪 Activation musculaire</div>
-              {planAction.activation.map((ex, i) => (
-                <div key={i} className="bilan-road-exercise">
-                  <div className="bilan-road-exercise-name">{ex.exercice}</div>
-                  <div className="bilan-road-exercise-obj">{ex.objectif}</div>
-                  <VideoLink text="Voir la vidéo" link={ex.link} />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Vacuum */}
-          {hasVacuum && (
-            <div
-              className="bilan-road-section bilan-road-action-block"
-              style={{ opacity: 0 }}
-            >
-              <div className="bilan-road-action-title">💨 Vacuum</div>
-              {planAction.vacuum.map((v, i) => (
-                <div key={i} className="bilan-road-exercise">
-                  {v.consigne && <div className="bilan-road-exercise-obj">{v.consigne}</div>}
-                  {v.progression && <div className="bilan-road-vacuum-progress">{v.progression}</div>}
-                  <VideoLink text={v.linkLabel} link={v.link} />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Posing Technique */}
-          {(hasPoses || hasTransitions || hasCorrections) && (
-            <div
-              className="bilan-road-section bilan-road-action-block"
-              style={{ opacity: 0 }}
-            >
-              <div className="bilan-road-action-title">🎭 Posing technique</div>
-
-              {hasPoses && (
-                <div className="bilan-road-sub-group">
-                  <div className="bilan-road-sub-label">Poses à travailler</div>
-                  {planAction.posingTechnique.poses.map((p, i) => (
-                    <div key={i} className="bilan-road-task">
-                      <VideoLink text={p.text} link={p.link} />
+          {(() => {
+            const planBlocks = [];
+            
+            if (hasMobilite) {
+              planBlocks.push(
+                <div key="mobilite" className="bilan-road-section bilan-road-action-block" style={{ opacity: 0 }}>
+                  <div className="bilan-road-action-title">🧘 Mobilité</div>
+                  {planAction.mobilite.map((ex, i) => (
+                    <div key={i} className="bilan-road-exercise">
+                      <div className="bilan-road-exercise-name">{ex.exercice}</div>
+                      <div className="bilan-road-exercise-obj">{ex.objectif}</div>
+                      <VideoLink text="Voir la vidéo" link={ex.link} />
                     </div>
                   ))}
                 </div>
-              )}
-
-              {hasTransitions && (
-                <div className="bilan-road-sub-group">
-                  <div className="bilan-road-sub-label">Transitions</div>
-                  {planAction.posingTechnique.transitions.map((tr, i) => (
-                    <div key={i} className="bilan-road-task">
-                      <VideoLink text={tr.text} link={tr.link} />
+              );
+            }
+            
+            if (hasActivation) {
+              planBlocks.push(
+                <div key="activation" className="bilan-road-section bilan-road-action-block" style={{ opacity: 0 }}>
+                  <div className="bilan-road-action-title">💪 Activation musculaire</div>
+                  {planAction.activation.map((ex, i) => (
+                    <div key={i} className="bilan-road-exercise">
+                      <div className="bilan-road-exercise-name">{ex.exercice}</div>
+                      <div className="bilan-road-exercise-obj">{ex.objectif}</div>
+                      <VideoLink text="Voir la vidéo" link={ex.link} />
                     </div>
                   ))}
                 </div>
-              )}
-
-              {hasCorrections && (
-                <div className="bilan-road-sub-group">
-                  <div className="bilan-road-sub-label">Corrections clés</div>
-                  {planAction.posingTechnique.corrections.map((c, i) => (
-                    <div key={i} className="bilan-road-task">
-                      <VideoLink text={c.text} link={c.link} />
+              );
+            }
+            
+            if (hasVacuum) {
+              planBlocks.push(
+                <div key="vacuum" className="bilan-road-section bilan-road-action-block" style={{ opacity: 0 }}>
+                  <div className="bilan-road-action-title">💨 Vacuum</div>
+                  {planAction.vacuum.map((v, i) => (
+                    <div key={i} className="bilan-road-exercise">
+                      {v.consigne && <div className="bilan-road-exercise-obj">{v.consigne}</div>}
+                      {v.progression && <div className="bilan-road-vacuum-progress">{v.progression}</div>}
+                      <VideoLink text={v.linkLabel} link={v.link} />
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-          )}
-
-          {/* Routine libre */}
-          {hasRoutine && (
-            <div
-              className="bilan-road-section bilan-road-action-block"
-              style={{ opacity: 0 }}
-            >
-              <div className="bilan-road-action-title">🎬 Routine libre / Présentation</div>
-              {planAction.routineLibre.map((r, i) => (
-                <div key={i} className="bilan-road-task">
-                  <VideoLink text={r.text} link={r.link} />
+              );
+            }
+            
+            if (hasPoses || hasTransitions || hasCorrections) {
+              planBlocks.push(
+                <div key="posing" className="bilan-road-section bilan-road-action-block" style={{ opacity: 0 }}>
+                  <div className="bilan-road-action-title">🎭 Posing technique</div>
+                  {hasPoses && (
+                    <div className="bilan-road-sub-group">
+                      <div className="bilan-road-sub-label">Poses à travailler</div>
+                      {planAction.posingTechnique.poses.map((p, i) => (
+                        <div key={i} className="bilan-road-task">
+                          <VideoLink text={p.text} link={p.link} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {hasTransitions && (
+                    <div className="bilan-road-sub-group">
+                      <div className="bilan-road-sub-label">Transitions</div>
+                      {planAction.posingTechnique.transitions.map((tr, i) => (
+                        <div key={i} className="bilan-road-task">
+                          <VideoLink text={tr.text} link={tr.link} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {hasCorrections && (
+                    <div className="bilan-road-sub-group">
+                      <div className="bilan-road-sub-label">Corrections clés</div>
+                      {planAction.posingTechnique.corrections.map((c, i) => (
+                        <div key={i} className="bilan-road-task">
+                          <VideoLink text={c.text} link={c.link} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
+              );
+            }
+            
+            if (hasRoutine) {
+              planBlocks.push(
+                <div key="routine" className="bilan-road-section bilan-road-action-block" style={{ opacity: 0 }}>
+                  <div className="bilan-road-action-title">🎬 Routine libre / Présentation</div>
+                  {planAction.routineLibre.map((r, i) => (
+                    <div key={i} className="bilan-road-task">
+                      <VideoLink text={r.text} link={r.link} />
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+            
+            if (planBlocks.length === 0) return null;
+            
+            const [firstBlock, ...restBlocks] = planBlocks;
+            return (
+              <>
+                <div className="pdf-block">
+                  <SectionHeader icon="📅" title="Plan d'action" />
+                  {firstBlock}
+                </div>
+                {restBlocks}
+              </>
+            );
+          })()}
 
           {/* ═══ RESSOURCES DE LA SEMAINE ═══ */}
-          <SectionHeader icon="📚" title="Ressources de la semaine" />
-          <div
-            className="bilan-road-section"
-            style={{ opacity: 0 }}
-          >
-            <table className="bilan-road-table">
-              <thead>
-                <tr>
-                  <th>Contenu</th>
-                  <th>Pourquoi</th>
-                  <th>Lien</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ressources.map((res, i) => (
-                  <tr key={i}>
-                    <td className="bilan-road-table-title">{res.title}</td>
-                    <td className="bilan-road-table-reason">{res.reason}</td>
-                    <td>
-                      <a
-                        href={res.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bilan-road-table-link"
-                      >
-                        Voir ↗
-                      </a>
-                    </td>
+          <div className="pdf-block">
+            <SectionHeader icon="📚" title="Ressources de la semaine" />
+            <div
+              className="bilan-road-section"
+              style={{ opacity: 0 }}
+            >
+              <table className="bilan-road-table">
+                <thead>
+                  <tr>
+                    <th>Contenu</th>
+                    <th>Pourquoi</th>
+                    <th>Lien</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {ressources.map((res, i) => (
+                    <tr key={i}>
+                      <td className="bilan-road-table-title">{res.title}</td>
+                      <td className="bilan-road-table-reason">{res.reason}</td>
+                      <td>
+                        <a
+                          href={res.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bilan-road-table-link"
+                        >
+                          <span>Voir</span>
+                          <LinkArrowIcon />
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* ═══ OBJECTIFS DE LA SEMAINE ═══ */}
-          <SectionHeader icon="✅" title="Objectifs de la semaine" />
-          <div
-            className="bilan-road-section"
-            style={{ opacity: 0 }}
-          >
-            <div className="bilan-road-objectives">
-              <div className="bilan-road-obj-main">
-                <span className="bilan-road-obj-icon" aria-hidden="true">🏆</span>
-                <div>
-                  <div className="bilan-road-obj-label">Objectif principal</div>
-                  <div className="bilan-road-obj-text">{objectifs.principal}</div>
-                </div>
-              </div>
-              {objectifs.secondaires.map((s, i) => (
-                <div key={i} className="bilan-road-obj-secondary">
-                  <span className="bilan-road-obj-icon" aria-hidden="true">🎯</span>
+          <div className="pdf-block">
+            <SectionHeader icon="✅" title="Objectifs de la semaine" />
+            <div
+              className="bilan-road-section"
+              style={{ opacity: 0 }}
+            >
+              <div className="bilan-road-objectives">
+                <div className="bilan-road-obj-main">
+                  <span className="bilan-road-obj-icon" aria-hidden="true">🏆</span>
                   <div>
-                    <div className="bilan-road-obj-label">Objectif secondaire {i + 1}</div>
-                    <div className="bilan-road-obj-text">{s}</div>
+                    <div className="bilan-road-obj-label">Objectif principal</div>
+                    <div className="bilan-road-obj-text">{objectifs.principal}</div>
                   </div>
                 </div>
-              ))}
+                {objectifs.secondaires.map((s, i) => (
+                  <div key={i} className="bilan-road-obj-secondary">
+                    <span className="bilan-road-obj-icon" aria-hidden="true">🎯</span>
+                    <div>
+                      <div className="bilan-road-obj-label">Objectif secondaire {i + 1}</div>
+                      <div className="bilan-road-obj-text">{s}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

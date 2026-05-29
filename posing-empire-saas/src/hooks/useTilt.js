@@ -18,6 +18,10 @@ export default function useTilt({ maxTilt = 5, perspective = 1000, scale = 1.01 
     const el = ref.current;
     if (!el) return;
 
+    // Disable tilt on mobile/touch devices
+    const isMobile = window.innerWidth <= 1024 || window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isMobile) return;
+
     // Set initial 3D perspective
     gsap.set(el, { transformPerspective: perspective, transformStyle: 'preserve-3d' });
 

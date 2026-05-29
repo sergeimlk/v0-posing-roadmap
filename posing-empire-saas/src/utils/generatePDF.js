@@ -23,8 +23,21 @@ export async function generatePDF(elementId, fullname) {
     // Add compatibility CSS class for layout rules
     clonedElement.classList.add('html2canvas-container');
 
+    // Swap the logo to white version for PDF render and wait for its completion
+    const logoImg = clonedElement.querySelector('.roadmap-logo');
+    if (logoImg) {
+      logoImg.src = '/posing-empire-white.svg';
+      logoImg.style.filter = 'none';
+      if (!logoImg.complete) {
+        await new Promise(resolve => {
+          logoImg.onload = resolve;
+          logoImg.onerror = resolve;
+        });
+      }
+    }
+
     // Wait a brief moment for browser layout recalculation of the clone
-    await new Promise(resolve => setTimeout(resolve, 150));
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     // Dynamic page splitting with page-break spacers on the clone
     const pageHeightPx = 1130; // A4 aspect ratio height at 800px width
@@ -32,7 +45,7 @@ export async function generatePDF(elementId, fullname) {
     const header = clonedElement.querySelector('.roadmap-header');
     const clientInfo = clonedElement.querySelector('.roadmap-client-info');
     const sectionTitle = clonedElement.querySelector('.roadmap-section-title');
-    const timelineItems = Array.from(clonedElement.querySelectorAll('.timeline-item'));
+    const timelineItems = Array.from(clonedElement.querySelectorAll('.timeline-item, .pdf-block, .bilan-road-action-block, .bilan-road-cta'));
     const footer = clonedElement.querySelector('.roadmap-footer');
 
     if (header) blocks.push(header);
@@ -41,40 +54,44 @@ export async function generatePDF(elementId, fullname) {
     blocks.push(...timelineItems);
     if (footer) blocks.push(footer);
 
-    const spacers = [];
-    let idx = 0;
+    // High performance batch measurements to avoid layout thrashing
+    const blockHeights = blocks.map(block => block.getBoundingClientRect().height);
+    const spacersToInsert = [];
+    let currentY = 0;
 
-    while (idx < blocks.length) {
-      const block = blocks[idx];
-      const containerTop = clonedElement.getBoundingClientRect().top;
-      const rect = block.getBoundingClientRect();
-      const blockTop = rect.top - containerTop;
-      const blockHeight = rect.height;
-      const blockBottom = blockTop + blockHeight;
+    for (let i = 0; i < blocks.length; i++) {
+      const block = blocks[i];
+      const h = blockHeights[i];
+      let blockTop = currentY;
+      let blockBottom = currentY + h;
 
       const currentPage = Math.floor(blockTop / pageHeightPx);
-      const nextPage = Math.floor((blockBottom - 4) / pageHeightPx); // 4px tolerance margin
+      const nextPage = Math.floor((blockBottom - 4) / pageHeightPx);
 
       if (nextPage > currentPage) {
-        // The block crosses the page boundary! Insert a spacer before it.
         const targetY = nextPage * pageHeightPx;
         const spaceNeeded = targetY - blockTop;
 
-        if (spaceNeeded > 0) {
-          const spacer = document.createElement('div');
-          spacer.className = 'pdf-page-spacer';
-          spacer.style.height = `${spaceNeeded}px`;
-          spacer.style.width = '100%';
-          spacer.style.background = '#050505'; // Match background color exactly
-          block.parentNode.insertBefore(spacer, block);
-          spacers.push(spacer);
-          
-          // Recheck this block since its position has now shifted
-          continue;
+        // Seuil de 250px max pour éviter les grands vides noirs
+        if (spaceNeeded > 0 && spaceNeeded < 250) {
+          spacersToInsert.push({ block, height: spaceNeeded });
+          currentY += spaceNeeded;
+          blockTop = currentY;
+          blockBottom = currentY + h;
         }
       }
-      idx++;
+      currentY = blockBottom;
     }
+
+    // Batch insert spacers into the DOM
+    spacersToInsert.forEach(({ block, height }) => {
+      const spacer = document.createElement('div');
+      spacer.className = 'pdf-page-spacer';
+      spacer.style.height = `${height}px`;
+      spacer.style.width = '100%';
+      spacer.style.background = '#050505';
+      block.parentNode.insertBefore(spacer, block);
+    });
 
     // Now gather coordinates of all link anchors (<a>) relative to the container
     // while the spacers are in their final positions.
@@ -95,10 +112,10 @@ export async function generatePDF(elementId, fullname) {
       };
     });
 
-    // Capture offscreen clone canvas
+    // Capture offscreen clone canvas (scale reduced to 1.5 for 2x performance boost)
     const canvas = await html2canvas(clonedElement, {
       backgroundColor: '#050505',
-      scale: 2,
+      scale: 1.5,
       useCORS: true,
       logging: false,
     });
@@ -110,6 +127,9 @@ export async function generatePDF(elementId, fullname) {
 
     // Draw the screenshot onto the PDF page by page
     if (pdfHeight <= pageHeight) {
+      // Set solid black background
+      pdf.setFillColor(5, 5, 5);
+      pdf.rect(0, 0, pdfWidth, pageHeight, 'F');
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       
       // Draw interactive clickable link overlays
@@ -118,11 +138,18 @@ export async function generatePDF(elementId, fullname) {
       });
     } else {
       let remaining = pdfHeight;
+      let pageNum = 1;
       while (remaining > 1) { // 1mm threshold to avoid empty end pages
+        if (pageNum > 1) {
+          pdf.addPage();
+        }
+        // Set solid black background for current page
+        pdf.setFillColor(5, 5, 5);
+        pdf.rect(0, 0, pdfWidth, pageHeight, 'F');
         pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
         remaining -= pageHeight;
         position -= pageHeight;
-        if (remaining > 1) pdf.addPage();
+        pageNum++;
       }
 
       // Draw interactive clickable link overlays on their respective pages

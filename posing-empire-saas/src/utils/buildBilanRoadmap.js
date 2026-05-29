@@ -210,7 +210,7 @@ function getVacuumLabel(level) {
 function getExampleByLevel(lvl, deb, inter, avance, expert) {
   if (lvl <= 1) return deb;
   if (lvl === 2) return inter;
-  if (lvl <= 4) return avance;
+  if (lvl === 3) return avance;
   return expert;
 }
 
@@ -225,14 +225,17 @@ export function buildBilanRoadmap(data) {
     routineProgress, nextWeekGoal, isAccompagnement,
   } = data;
 
-  const isMP = category === "Men's Physique";
-  const isCP = category === "Classic Physique";
-  const isBB = category === "Bodybuilding";
+  const primaryCategory = data.primaryCategory || (data.categories && data.categories[0]) || category || 'Non compétiteur';
+  const primaryFederation = data.primaryFederation || (data.federations && data.federations[0]) || federation || 'Aucune';
+
+  const isMP = primaryCategory === "Men's Physique";
+  const isCP = primaryCategory === "Classic Physique";
+  const isBB = primaryCategory === "Bodybuilding";
   const isCPorBB = isCP || isBB;
-  const isNonCompet = category === "Non compétiteur";
-  const isWNBF = federation === "WNBF";
-  const isNPC = federation === "NPC";
-  const isIFBB = federation === "IFBB";
+  const isNonCompet = primaryCategory === "Non compétiteur";
+  const isWNBF = primaryFederation === "WNBF";
+  const isNPC = primaryFederation === "NPC";
+  const isIFBB = primaryFederation === "IFBB";
   const allDetails = `${difficultiesDetails} ${mobilityDetails}`.toLowerCase();
 
   // ═══════════════════════════════════

@@ -58,13 +58,55 @@ const TIMES = [
 ];
 
 const LEVELS = [
-  { value: 0, label: 'Débutant' },
-  { value: 1, label: 'Novice' },
-  { value: 2, label: 'Intermédiaire' },
-  { value: 3, label: 'Confirmé' },
-  { value: 4, label: 'Avancé' },
-  { value: 5, label: 'Expert' },
+  { value: 1, label: '1 – Débutant' },
+  { value: 2, label: '2 – Intermédiaire' },
+  { value: 3, label: '3 – Avancé' },
+  { value: 4, label: '4 – Expert' },
 ];
+
+function isGibberishText(text) {
+  if (!text || !text.trim()) return false;
+  
+  const val = text.trim();
+  const words = val.split(/[^a-zA-Zà-üÀ-Ü\d']+/).filter(w => w.length > 0);
+  if (words.length === 0) return false;
+  
+  const whitelist2 = ['mr', 'dr', 'vs', 'st', 'ms', 'pr', 'kd', 'dj', 'mp', 'cp', 'bb'];
+  
+  for (const word of words) {
+    const len = word.length;
+    const lower = word.toLowerCase();
+    const vowelMatch = word.match(/[aeiouyâäéèêëîïôöûüœæ]/gi);
+    const vowelCount = vowelMatch ? vowelMatch.length : 0;
+    
+    // 1. 2-letter word without vowels (unless whitelisted)
+    if (len === 2 && vowelCount === 0 && !whitelist2.includes(lower)) {
+      return true;
+    }
+    
+    // 2. 3+ letter word without vowels
+    if (len >= 3 && vowelCount === 0) {
+      return true;
+    }
+    
+    // 3. 6+ letter word with only 1 vowel, unless it matches sport/strict/struct
+    if (len >= 6 && vowelCount <= 1 && !/sport|strict|struct/i.test(lower)) {
+      return true;
+    }
+    
+    // 4. 5+ consecutive consonants
+    if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(lower)) {
+      return true;
+    }
+    
+    // 5. Triple repeating characters
+    if (/(.)\1\1/.test(lower)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
 
 export default function FormScreen({ onSubmit }) {
   const [formData, setFormData] = useState({
@@ -256,6 +298,14 @@ export default function FormScreen({ onSubmit }) {
 
     if (formData.level === null) { triggerShake('level'); return; }
     if (!formData.time) { triggerShake('time'); return; }
+
+    // Validate text inputs for gibberish
+    if (isGibberishText(formData.fullname)) { triggerShake('fullname'); return; }
+    if (isGibberishText(formData.objectives)) { triggerShake('objectives'); return; }
+    if (isGibberishText(formData.problems)) { triggerShake('problems'); return; }
+    if (formData.categories.includes('Autre') && isGibberishText(formData.categoryOther)) { triggerShake('categoryOther'); return; }
+    if (isCompetitor && formData.stageIntent !== 'no_stage' && formData.federations.includes('Autre') && isGibberishText(formData.federationOther)) { triggerShake('federationOther'); return; }
+
     if (!consentAccepted) { triggerShake('consent'); return; }
 
     const resolvedCategories = formData.categories.map(c => 
@@ -331,7 +381,12 @@ export default function FormScreen({ onSubmit }) {
           <div className="form-gold-line"></div>
 
           {/* Nom & Prénom */}
-          <div className="form-group">
+          <motion.div
+            className="form-group"
+            id="group-fullname"
+            animate={shakeField === 'fullname' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
             <label htmlFor="fullname">Nom & Prénom <span className="required">*</span></label>
             <input
               type="text"
@@ -343,7 +398,20 @@ export default function FormScreen({ onSubmit }) {
               value={formData.fullname}
               onChange={(e) => updateField('fullname', e.target.value)}
             />
-          </div>
+            <AnimatePresence>
+              {isGibberishText(formData.fullname) && (
+                <motion.span
+                  className="error-text"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                >
+                  Veuillez écrire un nom correct (pas de texte aléatoire).
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
           {/* Catégorie */}
           <motion.div
@@ -363,7 +431,7 @@ export default function FormScreen({ onSubmit }) {
                     className={`selector-btn${isSelected ? ' selected' : ''}`}
                     onClick={(e) => handleCategoryToggle(cat.value, e)}
                     aria-pressed={isSelected}
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.005 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     <span className="selector-icon" aria-hidden="true">{cat.icon}</span>
@@ -424,7 +492,7 @@ export default function FormScreen({ onSubmit }) {
                       className={`selector-btn selector-btn-sm${formData.stageIntent === opt.value ? ' selected' : ''}`}
                       onClick={(e) => handleStageIntentChange(opt.value, e)}
                       aria-pressed={formData.stageIntent === opt.value}
-                      whileHover={{ scale: 1.01 }}
+                      whileHover={{ scale: 1.005 }}
                       whileTap={{ scale: 0.99 }}
                     >
                       {opt.label}
@@ -463,7 +531,7 @@ export default function FormScreen({ onSubmit }) {
                         className={`selector-btn selector-btn-sm${isSelected ? ' selected' : ''}`}
                         onClick={(e) => handleFederationToggle(fed.value, e)}
                         aria-pressed={isSelected}
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.005 }}
                         whileTap={{ scale: 0.98 }}
                       >
                         {fed.label}
@@ -528,7 +596,7 @@ export default function FormScreen({ onSubmit }) {
                         updateField('hasShorts', opt.value);
                       }}
                       aria-pressed={formData.hasShorts === opt.value}
-                      whileHover={{ scale: 1.02 }}
+                      whileHover={{ scale: 1.005 }}
                       whileTap={{ scale: 0.98 }}
                     >
                       {opt.label}
@@ -551,7 +619,7 @@ export default function FormScreen({ onSubmit }) {
               <div className="level-track">
                 <motion.div
                   className="level-fill"
-                  animate={{ width: formData.level !== null ? `${(formData.level / 5) * 100}%` : '0%' }}
+                  animate={{ width: formData.level !== null ? `${((formData.level - 1) / 3) * 100}%` : '0%' }}
                   transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                 />
               </div>
@@ -574,18 +642,35 @@ export default function FormScreen({ onSubmit }) {
           </motion.div>
 
           {/* Objectifs */}
-          <div className="form-group">
-            <label htmlFor="objectives">Objectifs du Skool <span className="required">*</span></label>
+          <motion.div
+            className="form-group"
+            id="group-objectives"
+            animate={shakeField === 'objectives' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label htmlFor="objectives">Objectifs du Skool</label>
             <textarea
               id="objectives"
               name="objectives"
               placeholder="Ex: Maîtriser les mandatories, préparer ma première compétition, améliorer mes transitions..."
               rows="3"
-              required
               value={formData.objectives}
               onChange={(e) => updateField('objectives', e.target.value)}
             />
-          </div>
+            <AnimatePresence>
+              {isGibberishText(formData.objectives) && (
+                <motion.span
+                  className="error-text"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                >
+                  Veuillez écrire une phrase correcte (pas de texte aléatoire).
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
           {/* Difficultés physiques */}
           <div className="form-group">
@@ -617,18 +702,35 @@ export default function FormScreen({ onSubmit }) {
           </div>
 
           {/* Problématiques */}
-          <div className="form-group">
-            <label htmlFor="problems">Précise tes difficultés physiques (Détails complémentaires, douleurs, raideurs...) <span className="required">*</span></label>
+          <motion.div
+            className="form-group"
+            id="group-problems"
+            animate={shakeField === 'problems' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label htmlFor="problems">Précise tes difficultés physiques (Détails complémentaires, douleurs, raideurs...)</label>
             <textarea
               id="problems"
               name="problems"
               placeholder="Ex: Douleur épaule droite lors des poses arrières, limitation mobilité omoplate, difficulté sur le vacuum, etc."
               rows="3"
-              required
               value={formData.problems}
               onChange={(e) => updateField('problems', e.target.value)}
             />
-          </div>
+            <AnimatePresence>
+              {isGibberishText(formData.problems) && (
+                <motion.span
+                  className="error-text"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ color: '#ff4d4d', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}
+                >
+                  Veuillez écrire une phrase correcte (pas de texte aléatoire).
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
           {/* Temps pratique quotidien */}
           <motion.div
@@ -649,7 +751,7 @@ export default function FormScreen({ onSubmit }) {
                     updateField('time', t.value);
                   }}
                   aria-pressed={formData.time === t.value}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.005 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   {t.label}
@@ -740,7 +842,7 @@ export default function FormScreen({ onSubmit }) {
                 </span>
               </span>
               <span className="privacy-checkbox-text">
-                J'accepte les <button type="button" className="legal-btn-link" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowLegalModal('cgu'); }}>CGU</button> et la <button type="button" className="legal-btn-link" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowLegalModal('rgpd'); }}>Politique de Confidentialité (RGPD)</button> de Posing Empire. <span className="required">*</span>
+                J'accepte les <button type="button" className="legal-btn-link" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowLegalModal('cgu'); }}>CGU</button> & la <span style={{ whiteSpace: 'nowrap' }}><button type="button" className="legal-btn-link" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowLegalModal('rgpd'); }}>Politique de Confidentialité</button>.<span className="required">&nbsp;*</span></span>
               </span>
             </label>
           </motion.div>

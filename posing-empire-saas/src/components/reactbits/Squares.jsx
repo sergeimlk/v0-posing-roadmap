@@ -4,8 +4,8 @@ import React, { useRef, useEffect } from 'react';
  * Squares Component (from ReactBits)
  * A canvas-based interactive grid background where squares pulse and glow on mouse hover.
  */
-export default function Squares({ 
-  squareSize = 45, 
+export default function Squares({
+  squareSize = 45,
   borderColor = 'rgba(212, 168, 67, 0.05)', // extremely subtle gold borders
   hoverColor = 'rgba(212, 168, 67, 0.12)', // gold flare on hover
   glowColor = 'rgba(212, 168, 67, 0.04)' // ambient gold sparkle
@@ -62,7 +62,7 @@ export default function Squares({
 
       squares.forEach((sq) => {
         const isMouseOver = mouse.x >= sq.x && mouse.x < sq.x + squareSize &&
-                            mouse.y >= sq.y && mouse.y < sq.y + squareSize;
+          mouse.y >= sq.y && mouse.y < sq.y + squareSize;
 
         if (isMouseOver) {
           sq.glow = 1.0;
@@ -100,15 +100,15 @@ export default function Squares({
   }, [squareSize, borderColor, hoverColor, glowColor]);
 
   return (
-    <canvas 
-      ref={canvasRef} 
+    <canvas
+      ref={canvasRef}
       className="squares-background"
-      style={{ 
-        position: 'absolute', 
-        top: 0, 
-        left: 0, 
-        width: '100%', 
-        height: '100%', 
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         pointerEvents: 'auto',
         zIndex: 0
       }}

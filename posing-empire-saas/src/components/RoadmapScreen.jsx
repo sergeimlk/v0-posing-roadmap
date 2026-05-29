@@ -6,7 +6,12 @@ import { generatePDF } from '../utils/generatePDF';
 import gsap from 'gsap';
 import useMagnetic from '../hooks/useMagnetic';
 
-const LEVEL_LABELS = ['Débutant total', 'Novice', 'Intermédiaire', 'Confirmé', 'Avancé', 'Expert'];
+const LEVEL_LABELS = {
+  1: '1 – Débutant',
+  2: '2 – Intermédiaire',
+  3: '3 – Avancé',
+  4: '4 – Expert'
+};
 const NEEDS_LABELS = {
   routine_libre: 'Routine Libre',
   presentation_individuelle: 'Présentation Individuelle',
@@ -17,13 +22,68 @@ function escHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+function LinkArrowIcon() {
+  return (
+    <span className="link-arrow" style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
+      {/* ================= OPTION A (Chain Link) ================= */}
+      <svg 
+        viewBox="0 0 24 24" 
+        width="14" 
+        height="14" 
+        fill="none" 
+        stroke="url(#goldGradientIcon)" 
+        strokeWidth="2.5" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+        style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px', transition: 'transform 0.2s ease' }}
+      >
+        <defs>
+          <linearGradient id="goldGradientIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFD54F" />
+            <stop offset="50%" stopColor="#D4A843" />
+            <stop offset="100%" stopColor="#B8942D" />
+          </linearGradient>
+        </defs>
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+      </svg>
+
+      {/* ================= OPTION B (External Link Box-Arrow) - Commenté pour switch ================= */}
+      {/* 
+      <svg 
+        viewBox="0 0 24 24" 
+        width="14" 
+        height="14" 
+        fill="none" 
+        stroke="url(#goldGradientIcon)" 
+        strokeWidth="2.5" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+        style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px', transition: 'transform 0.2s ease' }}
+      >
+        <defs>
+          <linearGradient id="goldGradientIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFD54F" />
+            <stop offset="50%" stopColor="#D4A843" />
+            <stop offset="100%" stopColor="#B8942D" />
+          </linearGradient>
+        </defs>
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+        <polyline points="15 3 21 3 21 9" />
+        <line x1="10" y1="14" x2="21" y2="3" />
+      </svg>
+      */}
+    </span>
+  );
+}
+
 export default function RoadmapScreen({ data, onRestart }) {
   const [downloading, setDownloading] = useState(false);
   const [openIndices, setOpenIndices] = useState([0]);
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
-  const downloadBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
-  const restartBtnRef = useMagnetic({ strength: 0.3, textStrength: 0.15 });
+  const downloadBtnRef = useMagnetic({ strength: 0.1, textStrength: 0.05, maxTravelX: 6, maxTravelY: 6 });
+  const restartBtnRef = useMagnetic({ strength: 0.1, textStrength: 0.05, maxTravelX: 6, maxTravelY: 6 });
 
   useEffect(() => {
     // 1. Stagger entry for client info and header elements
@@ -186,7 +246,7 @@ export default function RoadmapScreen({ data, onRestart }) {
             </div>
             <div className="info-item">
               <span className="info-label">Niveau</span>
-              <span className="info-value gold">{data.level}/5 — {LEVEL_LABELS[data.level]}</span>
+              <span className="info-value gold">{data.level}/4 — {LEVEL_LABELS[data.level]}</span>
             </div>
             <div className="info-item">
               <span className="info-label">Temps quotidien</span>
@@ -303,10 +363,25 @@ export default function RoadmapScreen({ data, onRestart }) {
                           animate={{ height: 'auto', opacity: 1, marginTop: '1rem' }}
                           exit={{ height: 0, opacity: 0, marginTop: 0 }}
                           transition={{ duration: 0.3, ease: 'easeInOut' }}
-                          style={{ overflow: 'hidden' }}
+                          style={{ overflow: isOpen ? 'visible' : 'hidden' }}
                         >
                           {isFirst ? (
                             <div className="timeline-tasks">
+                              <div className="timeline-week-header" style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                color: '#D4A843',
+                                fontSize: '0.9rem',
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                                marginBottom: '1rem',
+                                borderBottom: '1px solid rgba(212, 168, 67, 0.15)',
+                                paddingBottom: '0.5rem'
+                              }}>
+                                📅 Semaine 01 — Fondations & Point de départ
+                              </div>
                               {item.tasks.map((task, j) => {
                                 if (!task) return null;
                                 const content = (
@@ -325,7 +400,7 @@ export default function RoadmapScreen({ data, onRestart }) {
                                       className="timeline-task timeline-task-link"
                                     >
                                       {content}
-                                      <span className="link-arrow">↗</span>
+                                      <LinkArrowIcon />
                                     </a>
                                   );
                                 }
@@ -335,6 +410,24 @@ export default function RoadmapScreen({ data, onRestart }) {
                                   </div>
                                 );
                               })}
+                              <div className="timeline-week-notice-card" style={{
+                                marginTop: '1.5rem',
+                                background: 'rgba(212, 168, 67, 0.02)',
+                                border: '1px dashed rgba(212, 168, 67, 0.2)',
+                                borderRadius: '8px',
+                                padding: '1rem',
+                                display: 'flex',
+                                alignItems: 'start',
+                                gap: '0.75rem'
+                              }}>
+                                <span style={{ fontSize: '1.25rem', lineHeight: '1' }}>💡</span>
+                                <div style={{ fontSize: '0.85rem', color: '#ccc', lineHeight: '1.4' }}>
+                                  <strong style={{ color: '#D4A843', display: 'block', marginBottom: '0.25rem' }}>
+                                    Pour voir les autres semaines du premier mois :
+                                  </strong>
+                                  Effectue ton bilan hebdomadaire à la fin de la semaine dans le module <strong>Bilan Hebdomadaire</strong> pour débloquer automatiquement la suite personnalisée de ta roadmap.
+                                </div>
+                              </div>
                             </div>
                           ) : (
                             <div className="timeline-locked-info">
