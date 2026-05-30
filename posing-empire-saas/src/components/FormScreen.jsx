@@ -135,7 +135,8 @@ export default function FormScreen({ onSubmit }) {
     time: savedProfile?.time || '',
     needs: savedProfile?.needs || [],
     morphology: savedProfile?.morphology || '',
-    pointsFortsCustom: savedProfile?.pointsFortsCustom || '',
+    pointsFortsPhysiqueCustom: savedProfile?.pointsFortsPhysiqueCustom || (savedProfile?.pointsFortsCustom ? savedProfile.pointsFortsCustom : ''),
+    pointsFortsPosingCustom: savedProfile?.pointsFortsPosingCustom || '',
     pointsFaiblesCustom: savedProfile?.pointsFaiblesCustom || '',
     stageDate: savedProfile?.stageDate || '',
   });
@@ -317,11 +318,11 @@ export default function FormScreen({ onSubmit }) {
     if (formData.level === null) { triggerShake('level'); return; }
     if (!formData.time) { triggerShake('time'); return; }
 
-    // Validate text inputs for gibberish
     if (isGibberishText(formData.fullname)) { triggerShake('fullname'); return; }
     if (isGibberishText(formData.objectives)) { triggerShake('objectives'); return; }
     if (isGibberishText(formData.problems)) { triggerShake('problems'); return; }
-    if (formData.pointsFortsCustom && isGibberishText(formData.pointsFortsCustom)) { triggerShake('pointsFortsCustom'); return; }
+    if (formData.pointsFortsPhysiqueCustom && isGibberishText(formData.pointsFortsPhysiqueCustom)) { triggerShake('pointsFortsPhysiqueCustom'); return; }
+    if (formData.pointsFortsPosingCustom && isGibberishText(formData.pointsFortsPosingCustom)) { triggerShake('pointsFortsPosingCustom'); return; }
     if (formData.pointsFaiblesCustom && isGibberishText(formData.pointsFaiblesCustom)) { triggerShake('pointsFaiblesCustom'); return; }
     if (formData.categories.includes('Autre') && isGibberishText(formData.categoryOther)) { triggerShake('categoryOther'); return; }
     if (isCompetitor && formData.stageIntent !== 'no_stage' && formData.federations.includes('Autre') && isGibberishText(formData.federationOther)) { triggerShake('federationOther'); return; }
@@ -358,7 +359,11 @@ export default function FormScreen({ onSubmit }) {
       time: formData.time,
       needs: formData.needs,
       morphology: formData.morphology,
-      pointsFortsCustom: formData.pointsFortsCustom.trim(),
+      pointsFortsCustom: (formData.pointsFortsPhysiqueCustom.trim() || formData.pointsFortsPosingCustom.trim()) 
+        ? `Physique : ${formData.pointsFortsPhysiqueCustom.trim()}\nPosing : ${formData.pointsFortsPosingCustom.trim()}`.trim()
+        : '',
+      pointsFortsPhysiqueCustom: formData.pointsFortsPhysiqueCustom.trim(),
+      pointsFortsPosingCustom: formData.pointsFortsPosingCustom.trim(),
       pointsFaiblesCustom: formData.pointsFaiblesCustom.trim(),
       stageDate: formData.stageDate,
     };
@@ -373,7 +378,11 @@ export default function FormScreen({ onSubmit }) {
         federationOther: formData.federationOther.trim(),
         level: formData.level,
         morphology: formData.morphology,
-        pointsFortsCustom: formData.pointsFortsCustom.trim(),
+        pointsFortsCustom: (formData.pointsFortsPhysiqueCustom.trim() || formData.pointsFortsPosingCustom.trim()) 
+          ? `Physique : ${formData.pointsFortsPhysiqueCustom.trim()}\nPosing : ${formData.pointsFortsPosingCustom.trim()}`.trim()
+          : '',
+        pointsFortsPhysiqueCustom: formData.pointsFortsPhysiqueCustom.trim(),
+        pointsFortsPosingCustom: formData.pointsFortsPosingCustom.trim(),
         pointsFaiblesCustom: formData.pointsFaiblesCustom.trim(),
         stageDate: formData.stageDate,
         stageIntent: formData.stageIntent,
@@ -880,22 +889,42 @@ export default function FormScreen({ onSubmit }) {
             </AnimatePresence>
           </motion.div>
 
-          {/* Points forts custom */}
+          {/* Points forts physiques custom */}
           <motion.div
             className="form-group"
-            id="group-pointsFortsCustom"
-            animate={shakeField === 'pointsFortsCustom' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            id="group-pointsFortsPhysiqueCustom"
+            animate={shakeField === 'pointsFortsPhysiqueCustom' ? { x: [-6, 6, -6, 6, 0] } : {}}
             transition={{ duration: 0.4 }}
           >
-            <label htmlFor="pointsFortsCustom">Décris tes points forts physiques / posing (Optionnel)</label>
+            <label htmlFor="pointsFortsPhysiqueCustom">Décris tes points forts physiques (Optionnel)</label>
             <StarBorder color="rgba(212, 168, 67, 0.35)" speed="8s" className="star-border-wrap" style={{ width: '100%' }}>
               <textarea
-                id="pointsFortsCustom"
-                name="pointsFortsCustom"
+                id="pointsFortsPhysiqueCustom"
+                name="pointsFortsPhysiqueCustom"
                 placeholder="Ex: Bonne largeur de clavicules, sangle abdominale contrôlée, dos fort..."
                 rows="2"
-                value={formData.pointsFortsCustom}
-                onChange={(e) => updateField('pointsFortsCustom', e.target.value)}
+                value={formData.pointsFortsPhysiqueCustom}
+                onChange={(e) => updateField('pointsFortsPhysiqueCustom', e.target.value)}
+              />
+            </StarBorder>
+          </motion.div>
+
+          {/* Points forts posing custom */}
+          <motion.div
+            className="form-group"
+            id="group-pointsFortsPosingCustom"
+            animate={shakeField === 'pointsFortsPosingCustom' ? { x: [-6, 6, -6, 6, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <label htmlFor="pointsFortsPosingCustom">Décris tes points forts posing (Optionnel)</label>
+            <StarBorder color="rgba(212, 168, 67, 0.35)" speed="8s" className="star-border-wrap" style={{ width: '100%' }}>
+              <textarea
+                id="pointsFortsPosingCustom"
+                name="pointsFortsPosingCustom"
+                placeholder="Ex: Bonne présence scénique, fluidité des transitions, tenue des poses..."
+                rows="2"
+                value={formData.pointsFortsPosingCustom}
+                onChange={(e) => updateField('pointsFortsPosingCustom', e.target.value)}
               />
             </StarBorder>
           </motion.div>

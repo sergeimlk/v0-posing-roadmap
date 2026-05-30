@@ -66,17 +66,6 @@ export default function App() {
   return (
     <>
       <Navbar />
-      <GradualBlur
-        target="page"
-        position="bottom"
-        height="6rem"
-        strength={2.5}
-        divCount={6}
-        curve="bezier"
-        exponential={true}
-        opacity={1}
-        zIndex={500}
-      />
       <AnimatePresence mode="wait">
         {/* ═══ ONBOARDING FLOW ═══ */}
         {currentScreen === 'form' && (
